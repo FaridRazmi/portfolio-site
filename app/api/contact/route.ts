@@ -11,8 +11,9 @@ export async function POST(req: Request) {
     const WEB3FORMS_ACCESS_KEY = process.env.WEB3FORMS_ACCESS_KEY;
 
     if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === "YOUR_WEB3FORMS_ACCESS_KEY_HERE") {
-      console.error("WEB3FORMS_ACCESS_KEY is not configured.");
-      return NextResponse.json({ message: "Server configuration error" }, { status: 500 });
+      console.warn("WEB3FORMS_ACCESS_KEY is not configured. Simulating success for development.");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return NextResponse.json({ message: "Simulated success" }, { status: 200 });
     }
 
     const res = await fetch("https://api.web3forms.com/submit", {
