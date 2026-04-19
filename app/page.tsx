@@ -47,7 +47,7 @@ export default function Home() {
     <>
       {/* Preloader */}
       {loading && (
-        <Preloader totalFrames={144} onComplete={handlePreloaderComplete} />
+        <Preloader totalFrames={99} onComplete={handlePreloaderComplete} />
       )}
 
       {/* Main site */}

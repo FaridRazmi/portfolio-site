@@ -2,9 +2,9 @@
 import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 
-const TOTAL_FRAMES = 144;
+const TOTAL_FRAMES = 99;
 const FRAME_PATH = (i: number) =>
-  `/sequence/render-frame-${String(i).padStart(3, "0")}.png`;
+  `/sequence/ezgif-frame-${String(i).padStart(3, "0")}.png`;
 
 const OVERLAYS = [
   {
@@ -74,8 +74,14 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
     let fi = idx;
     if (!loaded.current[fi]) {
       for (let d = 1; d < TOTAL_FRAMES; d++) {
-        if (fi - d >= 0 && loaded.current[fi - d]) { fi = fi - d; break; }
-        if (fi + d < TOTAL_FRAMES && loaded.current[fi + d]) { fi = fi + d; break; }
+        if (fi - d >= 0 && loaded.current[fi - d]) {
+          fi = fi - d;
+          break;
+        }
+        if (fi + d < TOTAL_FRAMES && loaded.current[fi + d]) {
+          fi = fi + d;
+          break;
+        }
       }
     }
     const img = frames.current[fi];
@@ -200,7 +206,10 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
     let done = 0;
     let signaled = false;
     const signal = () => {
-      if (!signaled) { signaled = true; onLoaded(); }
+      if (!signaled) {
+        signaled = true;
+        onLoaded();
+      }
     };
     // Re-cache geometry after dynamic imports settle
     setTimeout(cacheGeometry, 500);
@@ -239,7 +248,9 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
         }}
       >
         {/* Bg fill */}
-        <div style={{ position: "absolute", inset: 0, background: "#0c0c0c" }} />
+        <div
+          style={{ position: "absolute", inset: 0, background: "#0c0c0c" }}
+        />
 
         {/* Frame canvas */}
         <canvas
@@ -302,7 +313,9 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
           >
             {/* Inner content — this div gets opacity/transform set directly */}
             <div
-              ref={(el) => { overlayRefs.current[i] = el; }}
+              ref={(el) => {
+                overlayRefs.current[i] = el;
+              }}
               style={{
                 opacity: 0,
                 transform: "translateY(28px)",
@@ -387,7 +400,12 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
                   <div style={{ marginTop: "2rem" }}>
                     <a href="#contact" className="magnetic-btn">
                       <span>Get in touch</span>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
                         <path
                           d="M3 8h10M9 4l4 4-4 4"
                           stroke="currentColor"
