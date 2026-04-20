@@ -1,10 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { motion } from "motion/react";
-
-const TOTAL_FRAMES = 99;
-const FRAME_PATH = (i: number) =>
-  `/sequence/ezgif-frame-${String(i).padStart(3, "0")}.png`;
+import { Canvas, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 const OVERLAYS = [
   {
@@ -38,65 +36,93 @@ const OVERLAYS = [
   },
 ];
 
+function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
+  const meshRef = useRef<THREE.Group>(null);
+  const particlesRef = useRef<THREE.Points>(null);
+
+  const particlesCount = 2000;
+  const particlesPosition = useMemo(() => {
+    const p = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount; i++) {
+        p[i * 3 + 0] = (Math.random() - 0.5) * 40;
+        p[i * 3 + 1] = (Math.random() - 0.5) * 40;
+        p[i * 3 + 2] = (Math.random() - 0.5) * 40;
+    }
+    return p;
+  }, []);
+
+  useFrame((state, delta) => {
+    const p = scrollProgress.current;
+
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.1;
+      meshRef.current.rotation.x += delta * 0.15;
+      
+      const targetY = p * Math.PI * 4;
+      const targetZ = p * 15;
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetY, 0.1);
+      meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.1);
+    }
+    
+    if (particlesRef.current) {
+      particlesRef.current.rotation.y += delta * 0.05;
+      const targetZ = p * 30;
+      particlesRef.current.position.z = THREE.MathUtils.lerp(particlesRef.current.position.z, targetZ, 0.1);
+    }
+  });
+
+  return (
+    <>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={2} />
+      
+      <points ref={particlesRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={particlesCount}
+            array={particlesPosition}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial size={0.05} color="#4af7c2" transparent opacity={0.4} />
+      </points>
+
+      <group ref={meshRef} position={[0, -2, -10]}>
+        <mesh>
+          <torusKnotGeometry args={[8, 2, 256, 32]} />
+          <meshStandardMaterial 
+             color="#111111" 
+             wireframe 
+             wireframeLinewidth={2}
+          />
+        </mesh>
+        
+        <mesh>
+          <icosahedronGeometry args={[5, 1]} />
+          <meshBasicMaterial color="#c8f135" wireframe transparent opacity={0.15} />
+        </mesh>
+      </group>
+    </>
+  );
+}
+
 export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Direct refs to each overlay's inner content div — for zero-rerender DOM updates
+  
   const overlayRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(OVERLAYS.length).fill(null),
   );
 
-  const frames = useRef<(HTMLImageElement | null)[]>(
-    new Array(TOTAL_FRAMES).fill(null),
-  );
-  const loaded = useRef<boolean[]>(new Array(TOTAL_FRAMES).fill(false));
-  const lastDrawn = useRef(0);
-
-  // Cached geometry — only recalculate on resize
   const containerTopRef = useRef(0);
   const scrollableRef = useRef(0);
-
-  // Scroll state
   const scrollYRef = useRef(0);
   const rafPending = useRef(false);
   const lastProgress = useRef(-1);
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const progressRef = useRef(0);
 
-  // ─── Cover-fit draw ────────────────────────────────────────────────────────
-  const drawFrame = (idx: number) => {
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (!canvas || !ctx) return;
-    const { width: cw, height: ch } = canvas;
-    if (!cw || !ch) return;
-
-    // Nearest-available fallback
-    let fi = idx;
-    if (!loaded.current[fi]) {
-      for (let d = 1; d < TOTAL_FRAMES; d++) {
-        if (fi - d >= 0 && loaded.current[fi - d]) {
-          fi = fi - d;
-          break;
-        }
-        if (fi + d < TOTAL_FRAMES && loaded.current[fi + d]) {
-          fi = fi + d;
-          break;
-        }
-      }
-    }
-    const img = frames.current[fi];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
-
-    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    const sw = img.naturalWidth * scale;
-    const sh = img.naturalHeight * scale;
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
-    lastDrawn.current = fi;
-  };
-
-  // ─── Direct DOM overlay update — ZERO React re-renders ────────────────────
   const updateOverlays = (p: number) => {
+    progressRef.current = p;
     OVERLAYS.forEach((item, i) => {
       const el = overlayRefs.current[i];
       if (!el) return;
@@ -114,21 +140,17 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
 
       el.style.opacity = String(op);
       el.style.transform = `translateY(${ty}px)`;
-      // pointer-events on parent
       const parent = el.parentElement;
       if (parent) parent.style.pointerEvents = op > 0.05 ? "auto" : "none";
     });
 
-    // Scroll indicator
     const si = document.getElementById("scroll-indicator");
     if (si) si.style.opacity = p < 0.04 ? "1" : "0";
   };
 
-  // ─── Cache geometry (cheap, only on resize/mount) ─────────────────────────
   const cacheGeometry = () => {
     const container = containerRef.current;
     if (!container) return;
-    // Walk offsetParent — no reflow needed after first paint
     let top = 0;
     let el: HTMLElement | null = container;
     while (el) {
@@ -139,7 +161,6 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
     scrollableRef.current = container.offsetHeight - window.innerHeight;
   };
 
-  // ─── rAF tick — only fires when scroll changes ────────────────────────────
   const tick = () => {
     rafPending.current = false;
     const scrollable = scrollableRef.current;
@@ -150,31 +171,16 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
       Math.min(1, (scrollYRef.current - containerTopRef.current) / scrollable),
     );
 
-    // Skip if nothing changed (deduplicate)
     if (Math.abs(p - lastProgress.current) < 0.0003) return;
     lastProgress.current = p;
-
-    drawFrame(Math.round(p * (TOTAL_FRAMES - 1)));
     updateOverlays(p);
   };
 
-  // ─── Resize canvas ────────────────────────────────────────────────────────
-  const resizeCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctxRef.current = canvas.getContext("2d");
-    cacheGeometry();
-    drawFrame(lastDrawn.current);
-  };
-
   useEffect(() => {
-    resizeCanvas();
+    setTimeout(cacheGeometry, 500);
 
     const onResize = () => {
-      resizeCanvas();
-      // Re-run tick after resize to redraw at correct position
+      cacheGeometry();
       scrollYRef.current = window.scrollY;
       tick();
     };
@@ -190,49 +196,15 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
     window.addEventListener("resize", onResize, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    // Initial draw based on current scroll position
     scrollYRef.current = window.scrollY;
     requestAnimationFrame(tick);
+
+    onLoaded();
 
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ─── Preload images ───────────────────────────────────────────────────────
-  useEffect(() => {
-    let done = 0;
-    let signaled = false;
-    const signal = () => {
-      if (!signaled) {
-        signaled = true;
-        onLoaded();
-      }
-    };
-    // Re-cache geometry after dynamic imports settle
-    setTimeout(cacheGeometry, 500);
-
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const frameIdx = i;
-      const img = new window.Image();
-      img.onload = () => {
-        frames.current[frameIdx] = img;
-        loaded.current[frameIdx] = true;
-        done++;
-        if (frameIdx === 0) {
-          resizeCanvas();
-          drawFrame(0);
-        }
-        if (done >= 20) signal();
-      };
-      img.onerror = () => {
-        done++;
-        if (done >= TOTAL_FRAMES) signal();
-      };
-      img.src = FRAME_PATH(i + 1);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -247,24 +219,14 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
           overflow: "hidden",
         }}
       >
-        {/* Bg fill */}
-        <div
-          style={{ position: "absolute", inset: 0, background: "#0c0c0c" }}
-        />
+        <div style={{ position: "absolute", inset: 0, background: "#0c0c0c" }} />
 
-        {/* Frame canvas */}
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            willChange: "contents",
-          }}
-        />
+        <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
+           <Canvas camera={{ position: [0, 0, 15], fov: 45 }} gl={{ antialias: true }}>
+              <Scene scrollProgress={progressRef} />
+           </Canvas>
+        </div>
 
-        {/* Stronger vignette for contrast */}
         <div
           style={{
             position: "absolute",
@@ -272,11 +234,10 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
             pointerEvents: "none",
             zIndex: 5,
             background:
-              "radial-gradient(ellipse at center, transparent 25%, rgba(12,12,12,0.75) 100%)",
+              "radial-gradient(ellipse at center, transparent 25%, rgba(12,12,12,0.85) 100%)",
           }}
         />
 
-        {/* Bottom gradient fade — helps text pop */}
         <div
           style={{
             position: "absolute",
@@ -287,11 +248,10 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
             pointerEvents: "none",
             zIndex: 6,
             background:
-              "linear-gradient(to bottom, transparent, rgba(12,12,12,0.55))",
+              "linear-gradient(to bottom, transparent, rgba(12,12,12,0.65))",
           }}
         />
 
-        {/* Text overlays — opacity/transform driven via DOM refs, NOT React state */}
         {OVERLAYS.map((item, i) => (
           <div
             key={i}
@@ -311,7 +271,6 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
               pointerEvents: "none",
             }}
           >
-            {/* Inner content — this div gets opacity/transform set directly */}
             <div
               ref={(el) => {
                 overlayRefs.current[i] = el;
@@ -324,7 +283,6 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
                 willChange: "opacity, transform",
               }}
             >
-              {/* Frosted glass backdrop */}
               <div
                 style={{
                   background: "rgba(8, 8, 8, 0.72)",
@@ -345,7 +303,6 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
                     "0 8px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(200,241,53,0.05) inset",
                 }}
               >
-                {/* Overline label */}
                 <div
                   style={{
                     fontFamily: "'Space Grotesk', sans-serif",
@@ -353,7 +310,7 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
                     fontWeight: 600,
                     letterSpacing: "0.25em",
                     color: "#c8f135",
-                    marginBottom: "0.75rem",
+                    margin: "0 0 0.75rem",
                     textTransform: "uppercase",
                   }}
                 >
@@ -422,7 +379,6 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
           </div>
         ))}
 
-        {/* Scroll indicator */}
         <div
           id="scroll-indicator"
           style={{
