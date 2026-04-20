@@ -96,9 +96,8 @@ function Scene({
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
+            args={[particlesPosition, 3]}
             count={particlesCount}
-            array={particlesPosition}
-            itemSize={3}
           />
         </bufferGeometry>
         <pointsMaterial size={0.05} color="#4af7c2" transparent opacity={0.4} />
