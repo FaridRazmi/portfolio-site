@@ -128,7 +128,7 @@ export default function TestimonialsSection() {
             <div
               key={i}
               style={{
-                flex: "0 0 400px",
+                flex: "0 0 min(400px, 85vw)",
                 marginRight: "1px",
                 background: "var(--card)",
                 padding: "2.5rem 2rem",

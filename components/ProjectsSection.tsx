@@ -116,6 +116,7 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <motion.div
+      id={project.id}
       ref={ref}
       className="bento-card"
       onMouseMove={handleMouseMove}
@@ -123,11 +124,7 @@ function ProjectCard({ project }: { project: Project }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5 }}
-      style={{
-        gridColumn: `${project.col} / span ${project.colSpan}`,
-        gridRow: `${project.row} / span ${project.rowSpan}`,
-        minHeight: project.rowSpan > 1 ? "280px" : "180px",
-      }}
+      style={{ minHeight: project.rowSpan > 1 ? "280px" : "180px" }}
     >
       {/* Accent glow top-left */}
       <div
@@ -243,6 +240,20 @@ export default function ProjectsSection() {
             Things I&apos;ve built
           </h2>
         </motion.div>
+
+        {/* Bento grid styling wrapper */}
+        <style>{`
+          @media (min-width: 769px) {
+            ${PROJECTS.map(
+              (p) => `
+              #${p.id} {
+                grid-column: ${p.col} / span ${p.colSpan};
+                grid-row: ${p.row} / span ${p.rowSpan};
+              }
+            `
+            ).join("")}
+          }
+        `}</style>
 
         {/* Bento grid */}
         <div
