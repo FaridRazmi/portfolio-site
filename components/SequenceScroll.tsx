@@ -36,7 +36,11 @@ const OVERLAYS = [
   },
 ];
 
-function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
+function Scene({
+  scrollProgress,
+}: {
+  scrollProgress: React.MutableRefObject<number>;
+}) {
   const meshRef = useRef<THREE.Group>(null);
   const particlesRef = useRef<THREE.Points>(null);
 
@@ -44,9 +48,9 @@ function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<numb
   const particlesPosition = useMemo(() => {
     const p = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount; i++) {
-        p[i * 3 + 0] = (Math.random() - 0.5) * 40;
-        p[i * 3 + 1] = (Math.random() - 0.5) * 40;
-        p[i * 3 + 2] = (Math.random() - 0.5) * 40;
+      p[i * 3 + 0] = (Math.random() - 0.5) * 40;
+      p[i * 3 + 1] = (Math.random() - 0.5) * 40;
+      p[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
     return p;
   }, []);
@@ -57,17 +61,29 @@ function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<numb
     if (meshRef.current) {
       meshRef.current.rotation.y += delta * 0.1;
       meshRef.current.rotation.x += delta * 0.15;
-      
+
       const targetY = p * Math.PI * 4;
       const targetZ = p * 15;
-      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetY, 0.1);
-      meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.1);
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(
+        meshRef.current.rotation.y,
+        targetY,
+        0.1,
+      );
+      meshRef.current.position.z = THREE.MathUtils.lerp(
+        meshRef.current.position.z,
+        targetZ,
+        0.1,
+      );
     }
-    
+
     if (particlesRef.current) {
       particlesRef.current.rotation.y += delta * 0.05;
       const targetZ = p * 30;
-      particlesRef.current.position.z = THREE.MathUtils.lerp(particlesRef.current.position.z, targetZ, 0.1);
+      particlesRef.current.position.z = THREE.MathUtils.lerp(
+        particlesRef.current.position.z,
+        targetZ,
+        0.1,
+      );
     }
   });
 
@@ -75,7 +91,7 @@ function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<numb
     <>
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={2} />
-      
+
       <points ref={particlesRef}>
         <bufferGeometry>
           <bufferAttribute
@@ -91,16 +107,21 @@ function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<numb
       <group ref={meshRef} position={[0, -2, -10]}>
         <mesh>
           <torusKnotGeometry args={[8, 2, 256, 32]} />
-          <meshStandardMaterial 
-             color="#111111" 
-             wireframe 
-             wireframeLinewidth={2}
+          <meshStandardMaterial
+            color="#111111"
+            wireframe
+            wireframeLinewidth={2}
           />
         </mesh>
-        
+
         <mesh>
           <icosahedronGeometry args={[5, 1]} />
-          <meshBasicMaterial color="#c8f135" wireframe transparent opacity={0.15} />
+          <meshBasicMaterial
+            color="#c8f135"
+            wireframe
+            transparent
+            opacity={0.15}
+          />
         </mesh>
       </group>
     </>
@@ -109,7 +130,7 @@ function Scene({ scrollProgress }: { scrollProgress: React.MutableRefObject<numb
 
 export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const overlayRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(OVERLAYS.length).fill(null),
   );
@@ -219,12 +240,17 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
           overflow: "hidden",
         }}
       >
-        <div style={{ position: "absolute", inset: 0, background: "#0c0c0c" }} />
+        <div
+          style={{ position: "absolute", inset: 0, background: "#0c0c0c" }}
+        />
 
         <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-           <Canvas camera={{ position: [0, 0, 15], fov: 45 }} gl={{ antialias: true }}>
-              <Scene scrollProgress={progressRef} />
-           </Canvas>
+          <Canvas
+            camera={{ position: [0, 0, 15], fov: 45 }}
+            gl={{ antialias: true }}
+          >
+            <Scene scrollProgress={progressRef} />
+          </Canvas>
         </div>
 
         <div
