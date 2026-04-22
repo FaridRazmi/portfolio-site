@@ -131,21 +131,5 @@
     "link": "",
     "image": "",
     "order": 6
-  },
-  {
-    "title": "Testing admin page ",
-    "description": "testing only",
-    "tags": [
-      "typeshit"
-    ],
-    "col": 1,
-    "row": 1,
-    "colSpan": 4,
-    "rowSpan": 1,
-    "accent": "#c8f135",
-    "link": "",
-    "image": "",
-    "order": 7,
-    "id": "p-1776833005813"
   }
 ]
