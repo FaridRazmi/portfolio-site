@@ -1,0 +1,135 @@
+[
+  {
+    "id": "p1",
+    "title": "ESP32 IoT Gateway",
+    "description": "Custom firmware for ESP32 microcontroller integrating BLE/WiFi sensor aggregation, MQTT pub-sub, and OTA updates. Written in C++ with FreeRTOS.",
+    "tags": [
+      "C++",
+      "FreeRTOS",
+      "MQTT",
+      "ESP32"
+    ],
+    "col": 1,
+    "row": 1,
+    "colSpan": 5,
+    "rowSpan": 2,
+    "accent": "#4af7c2",
+    "link": "",
+    "image": "",
+    "order": 0
+  },
+  {
+    "id": "p2",
+    "title": "AI Image Generator",
+    "description": "Developed an AI-based image generation tool that converts text prompts into images",
+    "tags": [
+      "PyTorch",
+      "Diffusers",
+      "FastAPI",
+      "LoRA"
+    ],
+    "col": 6,
+    "row": 1,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#c8f135",
+    "link": "",
+    "image": "",
+    "order": 1
+  },
+  {
+    "id": "p3",
+    "title": "ReidTech SaaS",
+    "description": "Full-stack Next.js SaaS platform with Stripe, Supabase auth, and role-based access control. Deployed on Vercel Edge.Reidperfume",
+    "tags": [
+      "Next.js",
+      "Supabase",
+      "Stripe",
+      "TypeScript"
+    ],
+    "col": 10,
+    "row": 1,
+    "colSpan": 3,
+    "rowSpan": 2,
+    "accent": "#7c6af7",
+    "link": "",
+    "image": "",
+    "order": 2
+  },
+  {
+    "id": "p4",
+    "title": "User Location Email Sender Web App",
+    "description": "Developed a web application that detects a user's location using browser geolocation and automatically sends the location data via Gmail",
+    "tags": [
+      "Javascript",
+      "Geolocation API",
+      "EmailJS",
+      "Gmail"
+    ],
+    "col": 6,
+    "row": 2,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#f74a4a",
+    "link": "",
+    "image": "",
+    "order": 3
+  },
+  {
+    "id": "p5",
+    "title": "CLI Dev Tooling",
+    "description": "Custom Rust-based CLI tool that automates git workflows, scaffolding, and deploys across environments.",
+    "tags": [
+      "Rust",
+      "CLI",
+      "Git",
+      "DevOps"
+    ],
+    "col": 1,
+    "row": 3,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#f7a24a",
+    "link": "",
+    "image": "",
+    "order": 4
+  },
+  {
+    "id": "p6",
+    "title": "Real-Time Hand Sign to Text Recognition",
+    "description": "Developed a real-time hand sign recognition system that converts hand gestures into text using computer vision and machine learning",
+    "tags": [
+      "Python",
+      "OpenCV",
+      "MediaPipe",
+      "TensorFlow"
+    ],
+    "col": 5,
+    "row": 3,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#4ac4f7",
+    "link": "",
+    "image": "",
+    "order": 5
+  },
+  {
+    "id": "p7",
+    "title": "Portfolio OS",
+    "description": "This very site — a scrollytelling Next.js portfolio with scroll-linked 3D frame sequences and Awwwards-grade UI.",
+    "tags": [
+      "Next.js",
+      "Motion",
+      "Canvas",
+      "Lenis"
+    ],
+    "col": 9,
+    "row": 3,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#c8f135",
+    "link": "",
+    "image": "",
+    "order": 6
+  }
+]
