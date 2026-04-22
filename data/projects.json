@@ -40,7 +40,7 @@
   {
     "id": "p3",
     "title": "ReidTech SaaS",
-    "description": "Full-stack Next.js SaaS platform with Stripe, Supabase auth, and role-based access control. Deployed on Vercel Edge.Reidperfume",
+    "description": "Full-stack Next.js SaaS platform with Stripe, Supabase auth, and role-based access control. Deployed on Vercel Edge",
     "tags": [
       "Next.js",
       "Supabase",
@@ -131,5 +131,21 @@
     "link": "",
     "image": "",
     "order": 6
+  },
+  {
+    "title": "Testing admin page ",
+    "description": "testing only",
+    "tags": [
+      "typeshit"
+    ],
+    "col": 1,
+    "row": 1,
+    "colSpan": 4,
+    "rowSpan": 1,
+    "accent": "#c8f135",
+    "link": "",
+    "image": "",
+    "order": 7,
+    "id": "p-1776833005813"
   }
 ]
