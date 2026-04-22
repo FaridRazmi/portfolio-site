@@ -12,10 +12,7 @@
   --font-body: "Inter", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--bg);
-  --color-foreground: var(--fg);
-}
+
 
 *,
 *::before,
