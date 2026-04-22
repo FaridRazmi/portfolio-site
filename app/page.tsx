@@ -1,7 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "motion/react";
 
 // Dynamic imports — client only
 const Preloader = dynamic(() => import("@/components/Preloader"), {
@@ -33,70 +32,55 @@ const AuroraDivider = dynamic(() => import("@/components/AuroraDivider"), {
 });
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const [showPreloader, setShowPreloader] = useState(true);
 
   const handlePreloaderComplete = useCallback(() => {
-    setLoading(false);
-  }, []);
-
-  const handleFramesLoaded = useCallback(() => {
-    // frames loaded, could animate something here
+    setShowPreloader(false);
   }, []);
 
   return (
     <>
-      {/* Preloader */}
-      {loading && (
+      {/* Slim top-bar preloader — overlays content, gone in ~600ms */}
+      {showPreloader && (
         <Preloader totalFrames={99} onComplete={handlePreloaderComplete} />
       )}
 
-      {/* Main site */}
-      <AnimatePresence>
-        {!loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            {/* Fixed navbar */}
-            <Navbar />
+      {/* Main site — rendered immediately, no gate */}
+      <Navbar />
 
-            {/* ── HERO: Sequence scroll (500vh tall) ── */}
-            <SequenceScroll onLoaded={handleFramesLoaded} />
+      {/* ── HERO: Sequence scroll (500vh tall) ── */}
+      <SequenceScroll onLoaded={() => {}} />
 
-            {/* ── REST OF PORTFOLIO ── */}
-            <div
-              style={{
-                position: "relative",
-                zIndex: 10,
-                background: "var(--bg)",
-              }}
-            >
-              {/* About */}
-              <AboutSection />
+      {/* ── REST OF PORTFOLIO ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          background: "var(--bg)",
+        }}
+      >
+        {/* About */}
+        <AboutSection />
 
-              <AuroraDivider />
+        <AuroraDivider />
 
-              {/* Projects */}
-              <ProjectsSection />
+        {/* Projects */}
+        <ProjectsSection />
 
-              {/* Stats */}
-              <StatsSection />
+        {/* Stats */}
+        <StatsSection />
 
-              {/* Testimonials */}
-              <TestimonialsSection />
+        {/* Testimonials */}
+        <TestimonialsSection />
 
-              <AuroraDivider />
+        <AuroraDivider />
 
-              {/* CTA / Contact */}
-              <CTASection />
+        {/* CTA / Contact */}
+        <CTASection />
 
-              {/* Footer */}
-              <Footer />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Footer */}
+        <Footer />
+      </div>
     </>
   );
 }

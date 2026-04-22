@@ -277,132 +277,218 @@ export default function SequenceScroll({ onLoaded }: { onLoaded: () => void }) {
           }}
         />
 
-        {OVERLAYS.map((item, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 10,
-              display: "flex",
-              alignItems: "center",
-              justifyContent:
-                item.align === "left"
-                  ? "flex-start"
-                  : item.align === "right"
-                    ? "flex-end"
-                    : "center",
-              padding: "0 6vw",
-              pointerEvents: "none",
-            }}
-          >
+        {/* Shimmer keyframes injected once */}
+        <style>{`
+          @keyframes shimmer-swipe {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+          }
+          @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 6px 2px #c8f135; }
+            50%        { opacity: 0.4; box-shadow: 0 0 2px 1px #c8f135; }
+          }
+        `}</style>
+
+        {OVERLAYS.map((item, i) => {
+          const label =
+            item.align === "center" && i === 0
+              ? "Portfolio"
+              : item.align === "left"
+                ? "Expertise · 01"
+                : item.align === "right"
+                  ? "Expertise · 02"
+                  : "Let's Connect";
+          const accentBorderLeft =
+            item.align === "left" || item.align === "center"
+              ? "2px solid rgba(200,241,53,0.7)"
+              : "1px solid rgba(200,241,53,0.12)";
+          const accentBorderRight =
+            item.align === "right"
+              ? "2px solid rgba(200,241,53,0.7)"
+              : "1px solid rgba(200,241,53,0.12)";
+
+          return (
             <div
-              ref={(el) => {
-                overlayRefs.current[i] = el;
-              }}
+              key={i}
               style={{
-                opacity: 0,
-                transform: "translateY(28px)",
-                textAlign: item.align,
-                maxWidth: 660,
-                willChange: "opacity, transform",
+                position: "absolute",
+                inset: 0,
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                justifyContent:
+                  item.align === "left"
+                    ? "flex-start"
+                    : item.align === "right"
+                      ? "flex-end"
+                      : "center",
+                padding: "0 6vw",
+                pointerEvents: "none",
               }}
             >
               <div
+                ref={(el) => {
+                  overlayRefs.current[i] = el;
+                }}
                 style={{
-                  background: "rgba(8, 8, 8, 0.72)",
-                  backdropFilter: "blur(18px)",
-                  WebkitBackdropFilter: "blur(18px)",
-                  border: "1px solid rgba(200, 241, 53, 0.15)",
-                  borderLeft:
-                    item.align === "left" || item.align === "center"
-                      ? "3px solid #c8f135"
-                      : "1px solid rgba(200, 241, 53, 0.15)",
-                  borderRight:
-                    item.align === "right"
-                      ? "3px solid #c8f135"
-                      : "1px solid rgba(200, 241, 53, 0.15)",
-                  borderRadius: "12px",
-                  padding: "2rem 2.5rem",
-                  boxShadow:
-                    "0 8px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(200,241,53,0.05) inset",
+                  opacity: 0,
+                  transform: "translateY(28px) perspective(800px) rotateX(2deg)",
+                  textAlign: item.align,
+                  maxWidth: 680,
+                  willChange: "opacity, transform",
                 }}
               >
+                {/* Card */}
                 <div
                   style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: "0.65rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.25em",
-                    color: "#c8f135",
-                    margin: "0 0 0.75rem",
-                    textTransform: "uppercase",
+                    position: "relative",
+                    background:
+                      "linear-gradient(145deg, rgba(18,18,18,0.92) 0%, rgba(8,8,8,0.88) 100%)",
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
+                    border: "1px solid rgba(200,241,53,0.12)",
+                    borderTop: "1px solid rgba(255,255,255,0.08)",
+                    borderLeft: accentBorderLeft,
+                    borderRight: accentBorderRight,
+                    borderRadius: "16px",
+                    padding: "2.2rem 2.6rem",
+                    /* Layered depth shadows */
+                    boxShadow: [
+                      "0 2px 0 rgba(255,255,255,0.04) inset",    /* top specular */
+                      "0 -1px 0 rgba(0,0,0,0.5) inset",          /* bottom inner shadow */
+                      "0 1px 0 rgba(200,241,53,0.18)",            /* accent underline glow */
+                      "0 8px 32px rgba(0,0,0,0.6)",               /* ambient */
+                      "0 24px 80px rgba(0,0,0,0.5)",              /* deep lift */
+                      "0 0 60px rgba(200,241,53,0.06)",           /* accent halo */
+                    ].join(", "),
+                    overflow: "hidden",
                   }}
                 >
-                  {item.align === "center" && i === 0
-                    ? "Portfolio"
-                    : item.align === "left"
-                      ? "Expertise · 01"
-                      : item.align === "right"
-                        ? "Expertise · 02"
-                        : "Let's Connect"}
-                </div>
+                  {/* Shimmer sweep */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "25%",
+                      height: "100%",
+                      background:
+                        "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.045) 50%, transparent 100%)",
+                      animation: "shimmer-swipe 4s ease-in-out infinite",
+                      pointerEvents: "none",
+                    }}
+                  />
 
-                <h2
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: "clamp(2.4rem, 5.5vw, 5rem)",
-                    fontWeight: 800,
-                    letterSpacing: "-0.04em",
-                    lineHeight: 1.03,
-                    color: "#ffffff",
-                    whiteSpace: "pre-line",
-                    textShadow:
-                      "0 2px 8px rgba(0,0,0,0.8), 0 0 40px rgba(200,241,53,0.08)",
-                  }}
-                >
-                  {item.heading}
-                </h2>
-
-                <p
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: "clamp(1rem, 1.8vw, 1.2rem)",
-                    color: "rgba(232,232,232,0.88)",
-                    marginTop: "1rem",
-                    lineHeight: 1.65,
-                    fontWeight: 400,
-                    letterSpacing: "0.01em",
-                  }}
-                >
-                  {item.sub}
-                </p>
-
-                {"isCTA" in item && item.isCTA && (
-                  <div style={{ marginTop: "2rem" }}>
-                    <a href="#contact" className="magnetic-btn">
-                      <span>Get in touch</span>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M3 8h10M9 4l4 4-4 4"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </a>
+                  {/* Label pill */}
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      background: "rgba(200,241,53,0.07)",
+                      border: "1px solid rgba(200,241,53,0.22)",
+                      borderRadius: "100px",
+                      padding: "0.25rem 0.75rem 0.25rem 0.5rem",
+                      marginBottom: "1.1rem",
+                    }}
+                  >
+                    {/* Pulsing dot */}
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: "#c8f135",
+                        display: "block",
+                        animation: "pulse-dot 2s ease-in-out infinite",
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: "0.62rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.22em",
+                        color: "#c8f135",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {label}
+                    </span>
                   </div>
-                )}
+
+                  {/* Heading with gradient fill */}
+                  <h2
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
+                      fontWeight: 800,
+                      letterSpacing: "-0.04em",
+                      lineHeight: 1.05,
+                      whiteSpace: "pre-line",
+                      background:
+                        "linear-gradient(160deg, #ffffff 0%, #d8d8d8 45%, rgba(200,241,53,0.85) 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      /* Deep emboss shadow via drop-shadow filter */
+                      filter:
+                        "drop-shadow(0 2px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 32px rgba(200,241,53,0.14))",
+                    }}
+                  >
+                    {item.heading}
+                  </h2>
+
+                  {/* Divider line */}
+                  <div
+                    style={{
+                      marginTop: "1.2rem",
+                      height: "1px",
+                      background:
+                        "linear-gradient(90deg, rgba(200,241,53,0.35) 0%, rgba(200,241,53,0.06) 60%, transparent 100%)",
+                    }}
+                  />
+
+                  {/* Subtitle */}
+                  <p
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: "clamp(0.95rem, 1.7vw, 1.15rem)",
+                      marginTop: "1rem",
+                      lineHeight: 1.7,
+                      fontWeight: 400,
+                      letterSpacing: "0.01em",
+                      background:
+                        "linear-gradient(180deg, rgba(232,232,232,0.92) 0%, rgba(180,180,180,0.7) 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    {item.sub}
+                  </p>
+
+                  {"isCTA" in item && item.isCTA && (
+                    <div style={{ marginTop: "2rem" }}>
+                      <a href="#contact" className="magnetic-btn">
+                        <span>Get in touch</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path
+                            d="M3 8h10M9 4l4 4-4 4"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         <div
           id="scroll-indicator"
