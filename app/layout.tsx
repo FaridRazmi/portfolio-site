@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Reid — Software Engineer & Creative Technologist",
+  title: "ReidTech | Software Engineer & Creative Technologist",
   description:
     "Portfolio of Reid, a creative developer specializing in low-level systems, AI pipelines, and full-stack web experiences.",
   keywords: [
