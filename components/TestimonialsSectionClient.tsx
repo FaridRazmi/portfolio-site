@@ -96,7 +96,7 @@ export default function TestimonialsSectionClient({ data }: Props) {
           }}
         />
 
-        <div className="testimonial-track">
+        <div className="testimonial-track" style={{ cursor: "grab" }}>
           {all.map((t, i) => (
             <div
               key={t.id + "-" + i}
@@ -110,7 +110,6 @@ export default function TestimonialsSectionClient({ data }: Props) {
                 justifyContent: "space-between",
                 gap: "2rem",
                 border: "1px solid var(--border)",
-                cursor: "default",
               }}
             >
               {/* Quote */}
@@ -152,6 +151,28 @@ export default function TestimonialsSectionClient({ data }: Props) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Progress dots */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "0.5rem",
+          marginTop: "2rem",
+        }}
+      >
+        {testimonials.map((t) => (
+          <div
+            key={"dot-" + t.id}
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "var(--muted)",
+            }}
+          />
+        ))}
       </div>
     </section>
   );

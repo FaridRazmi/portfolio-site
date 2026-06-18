@@ -23,7 +23,7 @@ export default function NavbarClient({
   return (
     <>
       <nav className="navbar">
-        <a href="#" className="nav-logo" onClick={close}>
+        <a href="/" className="nav-logo" onClick={close}>
           {brandName}
           <span style={{ color: "var(--accent)" }}>{brandSuffix}</span>
         </a>

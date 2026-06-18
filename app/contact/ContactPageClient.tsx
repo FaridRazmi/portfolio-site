@@ -31,11 +31,37 @@ export default function ContactPageClient({ data }: Props) {
     email: "",
     message: "",
   });
+  const [botcheck, setBotcheck] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string }>({});
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
 
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validate = (): boolean => {
+    const next: { email?: string } = {};
+    if (!EMAIL_REGEX.test(formState.email)) {
+      next.email = "Please enter a valid email address.";
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot check
+    if (botcheck) {
+      // Silently "succeed" to not tip off bots
+      setSent(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setSent(false), 4000);
+      return;
+    }
+
+    // Schema validation
+    if (!validate()) return;
+
     setSending(true);
     try {
       const access_key = web3formsAccessKey;
@@ -43,6 +69,7 @@ export default function ContactPageClient({ data }: Props) {
         await new Promise((resolve) => setTimeout(resolve, 800));
         setSent(true);
         setFormState({ name: "", email: "", message: "" });
+        setBotcheck(false);
         setTimeout(() => setSent(false), 4000);
         setSending(false);
         return;
@@ -54,7 +81,9 @@ export default function ContactPageClient({ data }: Props) {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          ...formState,
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
           access_key,
           subject: `New Portfolio Message from ${formState.name}`,
         }),
@@ -63,12 +92,13 @@ export default function ContactPageClient({ data }: Props) {
       if (res.ok && json.success) {
         setSent(true);
         setFormState({ name: "", email: "", message: "" });
+        setBotcheck(false);
+        setErrors({});
         setTimeout(() => setSent(false), 4000);
       } else {
         alert("Failed to send message: " + (json.message || "Unknown error"));
       }
     } catch (err) {
-      console.error("Failed to submit form:", err);
       alert("An error occurred. Please try again later.");
     } finally {
       setSending(false);
@@ -227,6 +257,25 @@ export default function ContactPageClient({ data }: Props) {
             textAlign: "left",
           }}
         >
+          {/* Honeypot — hidden from humans, visible to bots */}
+          <div
+            style={{
+              position: "absolute",
+              left: "-9999px",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+            aria-hidden="true"
+          >
+            <input
+              type="checkbox"
+              name="botcheck"
+              tabIndex={-1}
+              autoComplete="off"
+              checked={botcheck}
+              onChange={(e) => setBotcheck(e.target.checked)}
+            />
+          </div>
           <div
             style={{
               display: "grid",
@@ -268,14 +317,17 @@ export default function ContactPageClient({ data }: Props) {
                   placeholder={field.placeholder}
                   required
                   value={field.id === "name" ? formState.name : formState.email}
-                  onChange={(e) =>
-                    setFormState((s) => ({ ...s, [field.id]: e.target.value }))
-                  }
+                  onChange={(e) => {
+                    setFormState((s) => ({ ...s, [field.id]: e.target.value }));
+                    if (field.id === "email" && errors.email) {
+                      setErrors({});
+                    }
+                  }}
                   style={{
                     width: "100%",
                     padding: "0.85rem 1rem",
                     background: "var(--card)",
-                    border: "1px solid var(--border)",
+                    border: `1px solid ${field.id === "email" && errors.email ? "#ef4444" : "var(--border)"}`,
                     borderRadius: "4px",
                     color: "var(--fg)",
                     fontFamily: "var(--font-body)",
@@ -286,8 +338,25 @@ export default function ContactPageClient({ data }: Props) {
                   onFocus={(e) =>
                     (e.target.style.borderColor = "var(--accent)")
                   }
-                  onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor =
+                      field.id === "email" && errors.email
+                        ? "#ef4444"
+                        : "var(--border)")
+                  }
                 />
+                {field.id === "email" && errors.email && (
+                  <p
+                    style={{
+                      color: "#ef4444",
+                      fontSize: "0.7rem",
+                      marginTop: "0.25rem",
+                      fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    {errors.email}
+                  </p>
+                )}
               </div>
             ))}
           </div>

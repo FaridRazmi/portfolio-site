@@ -7,7 +7,7 @@
       "align": "center",
       "heading": "Reid",
       "sub": "Software Engineer & Creative Technologist",
-      "label": "Portfolio",
+
       "isCTA": false
     },
     {
@@ -17,7 +17,7 @@
       "align": "left",
       "heading": "Systems & Security",
       "sub": "Architecting scalable backends and high-performance systems in C++ and Python.",
-      "label": "Expertise · 01",
+
       "isCTA": false
     },
     {
@@ -27,7 +27,7 @@
       "align": "right",
       "heading": "AI & ML Pipelines",
       "sub": "Training models and building generative AI pipelines with PyTorch & Diffusers.",
-      "label": "Expertise · 02",
+
       "isCTA": false
     },
     {
@@ -37,7 +37,6 @@
       "align": "center",
       "heading": "Let's compile\nyour next idea.",
       "sub": "Available for freelance, collabs, and full-time roles.",
-      "label": "Let's Connect",
       "isCTA": true
     }
   ]

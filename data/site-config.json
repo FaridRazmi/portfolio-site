@@ -9,15 +9,15 @@
     "links": [
       {
         "label": "About",
-        "href": "#about"
+        "href": "/#about"
       },
       {
         "label": "Projects",
-        "href": "#projects"
+        "href": "/#projects"
       },
       {
         "label": "Experience",
-        "href": "#stats"
+        "href": "/#stats"
       },
       {
         "label": "Contact",

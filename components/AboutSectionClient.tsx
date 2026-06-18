@@ -79,7 +79,7 @@ export default function AboutSectionClient({ data }: Props) {
             const wordStart = (i / bioWords.length) * 0.8;
             const wordEnd = ((i + 1) / bioWords.length) * 0.8 + 0.1;
             const opacity = Math.max(
-              0.1,
+              0.32,
               Math.min(1, (wordProgress - wordStart) / (wordEnd - wordStart)),
             );
 

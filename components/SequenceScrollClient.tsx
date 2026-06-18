@@ -114,6 +114,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
   const rafPending = useRef(false);
   const lastProgress = useRef(-1);
   const progressRef = useRef(0);
+  const inViewRef = useRef(true);
 
   const updateOverlays = (p: number) => {
     progressRef.current = p;
@@ -126,7 +127,8 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
       let ty = 0;
 
       if (visible) {
-        const fadeIn = (p - item.start) / 0.08;
+        const fadeInRaw = (p - item.start) / 0.08;
+        const fadeIn = item.start === 0 ? Math.max(1, fadeInRaw) : fadeInRaw;
         const fadeOut = 1 - (p - (item.end - 0.08)) / 0.08;
         op = Math.max(0, Math.min(1, Math.min(fadeIn, fadeOut)));
         ty = (1 - op) * (p < item.start + 0.08 ? 28 : -18);
