@@ -1,0 +1,28 @@
+{
+  "stats": [
+    {
+      "value": 342,
+      "suffix": "+",
+      "label": "Commits",
+      "description": "Across personal & open-source repos"
+    },
+    {
+      "value": 4,
+      "suffix": "",
+      "label": "AI Models Trained",
+      "description": "Computer vision, NLP & generative"
+    },
+    {
+      "value": 12,
+      "suffix": "",
+      "label": "Projects Shipped",
+      "description": "From ESP32 to full-stack SaaS"
+    },
+    {
+      "value": 999,
+      "suffix": "+",
+      "label": "Cups of Coffee",
+      "description": "Powering late-night sessions"
+    }
+  ]
+}

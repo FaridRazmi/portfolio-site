@@ -1,0 +1,53 @@
+{
+  "brandName": "Reid",
+  "brandSuffix": ".",
+  "footer": {
+    "tagline": "Designed & built using Next.js, Motion & Canvas.",
+    "copyrightName": "ReidTech"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "About",
+        "href": "#about"
+      },
+      {
+        "label": "Projects",
+        "href": "#projects"
+      },
+      {
+        "label": "Experience",
+        "href": "#stats"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "socials": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/FaridRazmi"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://linkedin.com"
+      }
+    ]
+  },
+  "seo": {
+    "title": "ReidTech | Software Engineer & Creative Technologist",
+    "description": "Portfolio of Reid, a creative developer specializing in low-level systems, AI pipelines, and full-stack web experiences.",
+    "keywords": [
+      "portfolio",
+      "software engineer",
+      "C++",
+      "AI",
+      "Next.js",
+      "Python"
+    ],
+    "ogTitle": "Reid — Software Engineer & Creative Technologist",
+    "ogDescription": "Building at the intersection of systems, AI, and the web.",
+    "themeColor": "#0c0c0c"
+  }
+}

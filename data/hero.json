@@ -1,0 +1,44 @@
+{
+  "overlays": [
+    {
+      "id": "h1",
+      "start": 0,
+      "end": 0.22,
+      "align": "center",
+      "heading": "Reid",
+      "sub": "Software Engineer & Creative Technologist",
+      "label": "Portfolio",
+      "isCTA": false
+    },
+    {
+      "id": "h2",
+      "start": 0.25,
+      "end": 0.48,
+      "align": "left",
+      "heading": "Systems & Security",
+      "sub": "Architecting scalable backends and high-performance systems in C++ and Python.",
+      "label": "Expertise · 01",
+      "isCTA": false
+    },
+    {
+      "id": "h3",
+      "start": 0.52,
+      "end": 0.75,
+      "align": "right",
+      "heading": "AI & ML Pipelines",
+      "sub": "Training models and building generative AI pipelines with PyTorch & Diffusers.",
+      "label": "Expertise · 02",
+      "isCTA": false
+    },
+    {
+      "id": "h4",
+      "start": 0.78,
+      "end": 1.0,
+      "align": "center",
+      "heading": "Let's compile\nyour next idea.",
+      "sub": "Available for freelance, collabs, and full-time roles.",
+      "label": "Let's Connect",
+      "isCTA": true
+    }
+  ]
+}

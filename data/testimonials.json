@@ -1,0 +1,28 @@
+{
+  "testimonials": [
+    {
+      "id": "t1",
+      "quote": "Reid's systems-level thinking is exceptional. His C++ firmware work was performant, well-documented, and shipped on time.",
+      "name": "Marcus Chen",
+      "role": "CTO at IoTech Labs"
+    },
+    {
+      "id": "t2",
+      "quote": "The AI pipeline Reid built cut our inference costs by 60%. He bridged research and production seamlessly.",
+      "name": "Priya Nair",
+      "role": "ML Eng Lead at DataVault"
+    },
+    {
+      "id": "t4",
+      "quote": "Working with Reid felt like pair-programming with a senior engineer. Thoughtful, clean, and always proactive.",
+      "name": "Sofia Martinez",
+      "role": "Founder at Devcraft"
+    },
+    {
+      "id": "t5",
+      "quote": "Reid's penetration testing scripts uncovered 3 critical vulnerabilities we'd missed. Incredibly thorough.",
+      "name": "Daniel Yun",
+      "role": "Security Lead at ShieldStack"
+    }
+  ]
+}

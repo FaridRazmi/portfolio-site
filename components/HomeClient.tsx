@@ -2,17 +2,33 @@
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 
-const Preloader = dynamic(() => import("@/components/Preloader"), { ssr: false });
-const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
-const SequenceScroll = dynamic(() => import("@/components/SequenceScroll"), { ssr: false });
-const AboutSection = dynamic(() => import("@/components/AboutSection"), { ssr: false });
-const StatsSection = dynamic(() => import("@/components/StatsSection"), { ssr: false });
-const TestimonialsSection = dynamic(() => import("@/components/TestimonialsSection"), { ssr: false });
-const CTASection = dynamic(() => import("@/components/CTASection"), { ssr: false });
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
-const AuroraDivider = dynamic(() => import("@/components/AuroraDivider"), { ssr: false });
+const Preloader = dynamic(() => import("@/components/Preloader"), {
+  ssr: false,
+});
 
-export default function HomeClient({ projectsSlot }: { projectsSlot: React.ReactNode }) {
+interface Props {
+  projectsSlot: React.ReactNode;
+  aboutSlot: React.ReactNode;
+  statsSlot: React.ReactNode;
+  testimonialsSlot: React.ReactNode;
+  ctaSlot: React.ReactNode;
+  footerSlot: React.ReactNode;
+  navbarSlot: React.ReactNode;
+  sequenceScrollSlot: React.ReactNode;
+  auroraDividerSlot: React.ReactNode;
+}
+
+export default function HomeClient({
+  projectsSlot,
+  aboutSlot,
+  statsSlot,
+  testimonialsSlot,
+  ctaSlot,
+  footerSlot,
+  navbarSlot,
+  sequenceScrollSlot,
+  auroraDividerSlot,
+}: Props) {
   const [showPreloader, setShowPreloader] = useState(true);
 
   const handlePreloaderComplete = useCallback(() => {
@@ -25,21 +41,22 @@ export default function HomeClient({ projectsSlot }: { projectsSlot: React.React
         <Preloader totalFrames={99} onComplete={handlePreloaderComplete} />
       )}
 
-      <Navbar />
-      <SequenceScroll onLoaded={() => {}} />
+      {navbarSlot}
+      {sequenceScrollSlot}
 
-      <div style={{ position: "relative", zIndex: 10, background: "var(--bg)" }}>
-        <AboutSection />
-        <AuroraDivider />
+      <div
+        style={{ position: "relative", zIndex: 10, background: "var(--bg)" }}
+      >
+        {aboutSlot}
+        {auroraDividerSlot}
 
-        {/* Projects slot — rendered as server component from page.tsx */}
         {projectsSlot}
 
-        <StatsSection />
-        <TestimonialsSection />
-        <AuroraDivider />
-        <CTASection />
-        <Footer />
+        {statsSlot}
+        {testimonialsSlot}
+        {auroraDividerSlot}
+        {ctaSlot}
+        {footerSlot}
       </div>
     </>
   );

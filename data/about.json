@@ -1,0 +1,70 @@
+{
+  "name": "Reid",
+  "bioWords": [
+    "Reid",
+    "is",
+    "a",
+    "creative",
+    "developer",
+    "building",
+    "at",
+    "the",
+    "intersection",
+    "of",
+    "systems",
+    "programming,",
+    "AI,",
+    "and",
+    "the",
+    "open",
+    "web.",
+    "Fueled",
+    "by",
+    "curiosity",
+    "and",
+    "a",
+    "relentless",
+    "drive",
+    "to",
+    "push",
+    "pixels",
+    "and",
+    "packets",
+    "further",
+    "than",
+    "they've",
+    "ever",
+    "gone."
+  ],
+  "details": [
+    {
+      "label": "Location",
+      "value": "Kota Bharu, United Kelantan"
+    },
+    {
+      "label": "Focus",
+      "value": "Systems Security, AI & Web"
+    },
+    {
+      "label": "Status",
+      "value": "Student In CFS IIUM , Waiting For Degree "
+    },
+    {
+      "label": "Education (Soon) ",
+      "value": "Degree of Computer Science"
+    }
+  ],
+  "techStack": [
+    "C++",
+    "Python",
+    "JavaScript",
+    "TypeScript",
+    "PyTorch",
+    "Next.js",
+    "Rust",
+    "FastAPI",
+    "Docker",
+    "Linux",
+    "Git"
+  ]
+}
