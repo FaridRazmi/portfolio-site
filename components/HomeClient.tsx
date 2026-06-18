@@ -11,7 +11,7 @@ interface Props {
   aboutSlot: React.ReactNode;
   statsSlot: React.ReactNode;
   testimonialsSlot: React.ReactNode;
-  ctaSlot: React.ReactNode;
+  commentsSlot: React.ReactNode;
   footerSlot: React.ReactNode;
   navbarSlot: React.ReactNode;
   sequenceScrollSlot: React.ReactNode;
@@ -23,7 +23,7 @@ export default function HomeClient({
   aboutSlot,
   statsSlot,
   testimonialsSlot,
-  ctaSlot,
+  commentsSlot,
   footerSlot,
   navbarSlot,
   sequenceScrollSlot,
@@ -54,8 +54,8 @@ export default function HomeClient({
 
         {statsSlot}
         {testimonialsSlot}
+        {commentsSlot}
         {auroraDividerSlot}
-        {ctaSlot}
         {footerSlot}
       </div>
     </>

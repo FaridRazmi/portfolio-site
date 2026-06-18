@@ -434,7 +434,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
 
                   {item.isCTA && (
                     <div style={{ marginTop: "2rem" }}>
-                      <a href="#contact" className="magnetic-btn">
+                      <a href="/contact" className="magnetic-btn">
                         <span>Get in touch</span>
                         <svg
                           width="16"

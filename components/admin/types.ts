@@ -73,6 +73,8 @@ export interface ContactData {
   email: string;
   web3formsAccessKey: string;
   sectionLabel: string;
+  github: string;
+  linkedin: string;
 }
 
 // Site configuration (Footer, Navbar, SEO)
@@ -111,4 +113,16 @@ export interface SiteConfig {
   footer: FooterConfig;
   navbar: NavbarConfig;
   seo: SEOConfig;
+}
+
+// Comments section
+export interface Comment {
+  id: string;
+  name: string;
+  message: string;
+  timestamp: string;
+}
+
+export interface CommentsData {
+  comments: Comment[];
 }

@@ -63,6 +63,8 @@ export default function AdminContactPage() {
     email: "",
     web3formsAccessKey: "",
     sectionLabel: "",
+    github: "",
+    linkedin: "",
   });
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
@@ -126,7 +128,7 @@ export default function AdminContactPage() {
           letterSpacing: "-0.02em",
         }}
       >
-        Edit Contact / CTA Section
+        Edit Contact Page
       </h2>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -194,6 +196,41 @@ export default function AdminContactPage() {
           >
             Get yours at web3forms.com. Leave as placeholder for dev mode.
           </span>
+        </div>
+
+        <div
+          style={{
+            height: "1px",
+            background: "#1a1a1a",
+            margin: "0.5rem 0",
+          }}
+        />
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "1rem",
+          }}
+        >
+          <div>
+            <label style={labelStyle}>GitHub URL</label>
+            <input
+              style={inputStyle}
+              value={form.github}
+              onChange={(e) => update("github", e.target.value)}
+              placeholder="https://github.com/..."
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>LinkedIn URL</label>
+            <input
+              style={inputStyle}
+              value={form.linkedin}
+              onChange={(e) => update("linkedin", e.target.value)}
+              placeholder="https://linkedin.com/in/..."
+            />
+          </div>
         </div>
       </div>
 

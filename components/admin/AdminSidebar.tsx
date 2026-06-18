@@ -9,6 +9,7 @@ const SECTIONS = [
   { label: "Testimonials", href: "/admin/testimonials" },
   { label: "Hero", href: "/admin/hero" },
   { label: "Contact", href: "/admin/contact" },
+  { label: "Comments", href: "/admin/comments" },
   { label: "Site Settings", href: "/admin/settings" },
 ];
 

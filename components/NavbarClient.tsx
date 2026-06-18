@@ -28,6 +28,35 @@ export default function NavbarClient({
           <span style={{ color: "var(--accent)" }}>{brandSuffix}</span>
         </a>
 
+        {/* Desktop nav links — hidden on mobile */}
+        <div className="nav-desktop-links">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="nav-desktop-link"
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "0.85rem",
+                fontWeight: 400,
+                color: "var(--muted)",
+                textDecoration: "none",
+                transition: "color 0.2s",
+                letterSpacing: "0.02em",
+              }}
+              onMouseEnter={(e) =>
+                ((e.target as HTMLElement).style.color = "var(--fg)")
+              }
+              onMouseLeave={(e) =>
+                ((e.target as HTMLElement).style.color = "var(--muted)")
+              }
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        {/* Hamburger button — hidden on desktop */}
         <button
           className={`menu-btn ${menuOpen ? "open" : ""}`}
           onClick={() => setMenuOpen((v) => !v)}
@@ -39,7 +68,7 @@ export default function NavbarClient({
         </button>
       </nav>
 
-      {/* Fullscreen menu */}
+      {/* Fullscreen menu — only visible on mobile */}
       <div
         className={`fullscreen-menu ${menuOpen ? "open" : ""}`}
         aria-hidden={!menuOpen}

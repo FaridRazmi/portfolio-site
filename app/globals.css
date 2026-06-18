@@ -12,8 +12,6 @@
   --font-body: "Inter", sans-serif;
 }
 
-
-
 *,
 *::before,
 *::after {
@@ -85,8 +83,6 @@ h6 {
   backdrop-filter: blur(12px);
 }
 
-
-
 /* Navbar */
 .navbar {
   position: fixed;
@@ -109,6 +105,20 @@ h6 {
   text-decoration: none;
 }
 
+/* Desktop nav links */
+.nav-desktop-links {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 769px) {
+  .nav-desktop-links {
+    display: flex;
+  }
+}
+
+/* Hamburger button — visible on mobile only */
 .menu-btn {
   width: 48px;
   height: 48px;
@@ -126,6 +136,12 @@ h6 {
     background 0.3s,
     transform 0.3s;
   backdrop-filter: blur(8px);
+}
+
+@media (min-width: 769px) {
+  .menu-btn {
+    display: none;
+  }
 }
 
 .menu-btn:hover {

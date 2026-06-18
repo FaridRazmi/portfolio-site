@@ -2,7 +2,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 import AboutSection from "@/components/AboutSection";
 import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import CTASection from "@/components/CTASection";
+import CommentsSection from "@/components/CommentsSection";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SequenceScroll from "@/components/SequenceScroll";
@@ -16,7 +16,7 @@ export default function Home() {
       aboutSlot={<AboutSection />}
       statsSlot={<StatsSection />}
       testimonialsSlot={<TestimonialsSection />}
-      ctaSlot={<CTASection />}
+      commentsSlot={<CommentsSection />}
       footerSlot={<Footer />}
       navbarSlot={<Navbar />}
       sequenceScrollSlot={<SequenceScroll />}
