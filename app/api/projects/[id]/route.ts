@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { getProjects, updateProject, deleteProject } from "@/lib/data-store";
 
 function checkPin(req: Request) {
@@ -22,7 +21,6 @@ export async function PUT(
   const updated = getProjects().find((p) => p.id === id);
   if (!updated)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
-  revalidatePath("/");
 
   return NextResponse.json(updated);
 }
@@ -36,12 +34,10 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const projects = getProjects();
-  const exists = projects.find((p) => p.id === id);
+  const exists = getProjects().find((p) => p.id === id);
   if (!exists)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   deleteProject(id);
-  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }

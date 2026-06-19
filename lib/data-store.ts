@@ -1,16 +1,18 @@
 /**
- * In-memory data store for production deployment.
+ * In-memory data store.
  *
- * On serverless platforms (Vercel, Netlify, etc.) the filesystem is read-only.
- * This store initializes from JSON files at module load time and keeps all data
- * in process memory. All API routes read/write through this store instead of
- * directly using fs.writeFileSync.
+ * Initializes from data/*.json at module load (deployed defaults).
+ * Mutations stay in process memory for the lifetime of the warm lambda.
+ *
+ * All section components are "use client" and fetch from API routes,
+ * so fresh data is always served to the browser regardless of server state.
+ * Data resets on cold starts — acceptable for a portfolio/admin site.
  */
 
 import fs from "fs";
 import path from "path";
 
-// ---------- Types (mirrors admin/types.ts to avoid circular deps with "use client") ----------
+// ---------- Types ----------
 export interface Project {
   id: string;
   title: string;
@@ -25,33 +27,28 @@ export interface Project {
   image: string;
   order: number;
 }
-
 export interface AboutDetail {
   label: string;
   value: string;
 }
-
 export interface AboutData {
   name: string;
   bioWords: string[];
   details: AboutDetail[];
   techStack: string[];
 }
-
 export interface StatItem {
   value: number;
   suffix: string;
   label: string;
   description: string;
 }
-
 export interface Testimonial {
   id: string;
   quote: string;
   name: string;
   role: string;
 }
-
 export interface HeroOverlay {
   id: string;
   start: number;
@@ -62,7 +59,6 @@ export interface HeroOverlay {
   label: string;
   isCTA: boolean;
 }
-
 export interface ContactData {
   heading: string;
   subtitle: string;
@@ -72,22 +68,18 @@ export interface ContactData {
   github: string;
   linkedin: string;
 }
-
 export interface NavLink {
   label: string;
   href: string;
 }
-
 export interface SocialLink {
   label: string;
   href: string;
 }
-
 export interface FooterConfig {
   tagline: string;
   copyrightName: string;
 }
-
 export interface SEOConfig {
   title: string;
   description: string;
@@ -96,7 +88,6 @@ export interface SEOConfig {
   ogDescription: string;
   themeColor: string;
 }
-
 export interface SiteConfig {
   brandName: string;
   brandSuffix: string;
@@ -104,7 +95,6 @@ export interface SiteConfig {
   navbar: { links: NavLink[]; socials: SocialLink[] };
   seo: SEOConfig;
 }
-
 export interface Comment {
   id: string;
   name: string;
@@ -112,125 +102,145 @@ export interface Comment {
   timestamp: string;
 }
 
-// ---------- JSON helper ----------
-function loadJson<T>(filename: string): T {
-  const filePath = path.join(process.cwd(), "data", filename);
+function deepClone<T>(v: T): T {
+  return JSON.parse(JSON.stringify(v));
+}
+
+function load<T>(filename: string, fallback: T): T {
   try {
-    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
-  } catch {
-    // Return a safe empty default so the app doesn't crash if a file is missing
-    console.warn(
-      `[data-store] Could not read ${filename}, using empty default`,
+    return JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "data", filename), "utf-8"),
     );
-    return JSON.parse("{}");
+  } catch {
+    return fallback;
   }
 }
 
-// ---------- In-memory state ----------
-let projects: Project[] = loadJson<any>("projects.json");
-let about: AboutData = loadJson<AboutData>("about.json");
-let stats: StatItem[] =
-  loadJson<{ stats: StatItem[] }>("stats.json").stats ?? [];
-let testimonials: Testimonial[] =
-  loadJson<{ testimonials: Testimonial[] }>("testimonials.json").testimonials ??
-  [];
-let heroOverlays: HeroOverlay[] =
-  loadJson<{ overlays: HeroOverlay[] }>("hero.json").overlays ?? [];
-let contact: ContactData = loadJson<ContactData>("contact.json");
-let siteConfig: SiteConfig = loadJson<SiteConfig>("site-config.json");
-let comments: Comment[] =
-  loadJson<{ comments: Comment[] }>("comments.json").comments ?? [];
-
-// ---------- Public API ----------
+// In-memory state
+let projects: Project[] = load("projects.json", [] as Project[]);
+let about: AboutData = load("about.json", {
+  name: "",
+  bioWords: [],
+  details: [],
+  techStack: [],
+} as AboutData);
+let stats: StatItem[] = load("stats.json", { stats: [] as StatItem[] }).stats;
+let testimonials: Testimonial[] = load("testimonials.json", {
+  testimonials: [] as Testimonial[],
+}).testimonials;
+let heroOverlays: HeroOverlay[] = load("hero.json", {
+  overlays: [] as HeroOverlay[],
+}).overlays;
+let contact: ContactData = load("contact.json", {
+  heading: "",
+  subtitle: "",
+  email: "",
+  web3formsAccessKey: "",
+  sectionLabel: "",
+  github: "",
+  linkedin: "",
+} as ContactData);
+let siteConfig: SiteConfig = load("site-config.json", {
+  brandName: "",
+  brandSuffix: "",
+  footer: { tagline: "", copyrightName: "" },
+  navbar: { links: [], socials: [] },
+  seo: {
+    title: "",
+    description: "",
+    keywords: [],
+    ogTitle: "",
+    ogDescription: "",
+    themeColor: "",
+  },
+} as SiteConfig);
+let comments: Comment[] = load("comments.json", {
+  comments: [] as Comment[],
+}).comments;
 
 // Projects
 export function getProjects(): Project[] {
-  return [...projects];
+  return deepClone(projects);
 }
-export function setProjects(data: Project[]) {
-  projects = data;
+export function setProjects(d: Project[]) {
+  projects = d;
 }
 export function addProject(p: Project) {
   projects.push(p);
 }
-export function updateProject(id: string, updates: Partial<Project>) {
-  const idx = projects.findIndex((p) => p.id === id);
-  if (idx !== -1) projects[idx] = { ...projects[idx], ...updates };
+export function updateProject(id: string, u: Partial<Project>) {
+  const i = projects.findIndex((x) => x.id === id);
+  if (i !== -1) projects[i] = { ...projects[i], ...u };
 }
 export function deleteProject(id: string) {
-  projects = projects.filter((p) => p.id !== id);
+  projects = projects.filter((x) => x.id !== id);
 }
 
 // About
 export function getAbout(): AboutData {
-  return {
-    ...about,
-    bioWords: [...about.bioWords],
-    details: about.details.map((d) => ({ ...d })),
-    techStack: [...about.techStack],
-  };
+  return deepClone(about);
 }
-export function setAbout(data: AboutData) {
-  about = data;
+export function setAbout(d: AboutData) {
+  about = d;
 }
 
 // Stats
 export function getStats(): StatItem[] {
-  return stats.map((s) => ({ ...s }));
+  return deepClone(stats);
 }
-export function setStats(data: StatItem[]) {
-  stats = data;
+export function setStats(d: StatItem[]) {
+  stats = d;
 }
 
 // Testimonials
 export function getTestimonials(): Testimonial[] {
-  return testimonials.map((t) => ({ ...t }));
+  return deepClone(testimonials);
 }
-export function setTestimonials(data: Testimonial[]) {
-  testimonials = data;
+export function setTestimonials(d: Testimonial[]) {
+  testimonials = d;
 }
 export function addTestimonial(t: Testimonial) {
   testimonials.push(t);
 }
-export function updateTestimonial(id: string, updates: Partial<Testimonial>) {
-  const idx = testimonials.findIndex((t) => t.id === id);
-  if (idx !== -1) testimonials[idx] = { ...testimonials[idx], ...updates };
+export function updateTestimonial(id: string, u: Partial<Testimonial>) {
+  const i = testimonials.findIndex((x) => x.id === id);
+  if (i !== -1) testimonials[i] = { ...testimonials[i], ...u };
 }
 export function deleteTestimonial(id: string) {
-  testimonials = testimonials.filter((t) => t.id !== id);
+  testimonials = testimonials.filter((x) => x.id !== id);
 }
 
-// Hero overlays
+// Hero
 export function getHeroOverlays(): HeroOverlay[] {
-  return heroOverlays.map((o) => ({ ...o }));
+  return deepClone(heroOverlays);
 }
-export function setHeroOverlays(data: HeroOverlay[]) {
-  heroOverlays = data;
+export function setHeroOverlays(d: HeroOverlay[]) {
+  heroOverlays = d;
 }
 
 // Contact
 export function getContact(): ContactData {
-  return { ...contact };
+  return deepClone(contact);
 }
-export function setContact(data: ContactData) {
-  contact = data;
+export function setContact(d: ContactData) {
+  contact = d;
 }
 
 // Site config
 export function getSiteConfig(): SiteConfig {
-  return JSON.parse(JSON.stringify(siteConfig));
+  return deepClone(siteConfig);
 }
-export function setSiteConfig(data: SiteConfig) {
-  siteConfig = data;
+export function setSiteConfig(d: SiteConfig) {
+  siteConfig = d;
 }
 
 // Comments
 export function getComments(): Comment[] {
-  return comments.map((c) => ({ ...c }));
+  return deepClone(comments);
 }
 export function addComment(c: Comment) {
   comments.unshift(c);
 }
 export function deleteComment(id: string) {
-  comments = comments.filter((c) => c.id !== id);
+  comments = comments.filter((x) => x.id !== id);
 }

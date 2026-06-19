@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { getProjects, addProject, setProjects } from "@/lib/data-store";
 
 function checkPin(req: Request) {
@@ -28,8 +27,6 @@ export async function POST(req: Request) {
   };
 
   addProject(newProject);
-  revalidatePath("/");
-
   return NextResponse.json(newProject, { status: 201 });
 }
 
@@ -40,7 +37,5 @@ export async function PUT(req: Request) {
 
   const body = await req.json();
   setProjects(body);
-  revalidatePath("/");
-
   return NextResponse.json({ ok: true });
 }

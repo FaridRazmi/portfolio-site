@@ -18,7 +18,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
   setTestimonials(body.testimonials ?? body);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json(body);
 }
 
@@ -29,6 +29,6 @@ export async function POST(req: Request) {
   const body = await req.json();
   const newTestimonial = { ...body, id: `t${Date.now()}` };
   addTestimonial(newTestimonial);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json(newTestimonial, { status: 201 });
 }

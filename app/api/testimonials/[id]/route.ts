@@ -16,7 +16,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   deleteTestimonial(id);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }
 
@@ -33,6 +33,6 @@ export async function PUT(
   const updated = getTestimonials().find((t) => t.id === id);
   if (!updated)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json(updated);
 }

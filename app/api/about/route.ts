@@ -14,6 +14,6 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
   setAbout(body);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json(body);
 }

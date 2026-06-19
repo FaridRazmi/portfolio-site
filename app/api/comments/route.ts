@@ -24,8 +24,7 @@ export async function POST(req: Request) {
   }
 
   addComment(newComment);
-  revalidatePath("/");
-
+  revalidatePath("/", "layout");
   return NextResponse.json(newComment, { status: 201 });
 }
 
@@ -37,6 +36,6 @@ export async function DELETE(req: Request) {
   const body = await req.json();
   const { id } = body;
   deleteComment(id);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }
