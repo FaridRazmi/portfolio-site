@@ -57,6 +57,7 @@ export default function AdminHeroPage() {
   const router = useRouter();
   const [pin, setPin] = useState<string | null>(null);
   const [overlays, setOverlays] = useState<HeroOverlay[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -74,6 +75,7 @@ export default function AdminHeroPage() {
     });
     const json: HeroData = await res.json();
     setOverlays(json.overlays);
+    setLoaded(true);
   }, []);
 
   const onAuth = useCallback(
@@ -109,7 +111,7 @@ export default function AdminHeroPage() {
     router.refresh();
   };
 
-  if (!pin || overlays.length === 0) return <AdminPinGate onAuth={onAuth} />;
+  if (!loaded) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 900 }}>

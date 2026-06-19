@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 import { checkPin } from "@/app/api/_auth";
@@ -19,6 +20,7 @@ export async function DELETE(
     (t: { id: string }) => t.id !== id,
   );
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }
 
@@ -38,5 +40,6 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   data.testimonials[idx] = { ...data.testimonials[idx], ...body };
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  revalidatePath("/");
   return NextResponse.json(data.testimonials[idx]);
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 import { checkPin } from "@/app/api/_auth";
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
 
   data.comments.unshift(newComment);
   writeComments(data);
+  revalidatePath("/");
 
   return NextResponse.json(newComment, { status: 201 });
 }
@@ -52,5 +54,6 @@ export async function DELETE(req: Request) {
   const data = readComments();
   data.comments = data.comments.filter((c: { id: string }) => c.id !== id);
   writeComments(data);
+  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }

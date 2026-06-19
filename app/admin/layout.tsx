@@ -21,7 +21,26 @@ export default function AdminLayout({
       }}
     >
       <AdminSidebar />
-      <main style={{ marginLeft: 220, flex: 1, minWidth: 0 }}>{children}</main>
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-main {
+            margin-left: 0 !important;
+            padding-top: 60px;
+            width: 100%;
+          }
+        }
+        @media (min-width: 769px) {
+          .admin-main {
+            margin-left: 220px;
+          }
+        }
+      `}</style>
+      <main
+        className="admin-main"
+        style={{ flex: 1, minWidth: 0, padding: "2.5rem 1.5rem" }}
+      >
+        {children}
+      </main>
     </div>
   );
 }

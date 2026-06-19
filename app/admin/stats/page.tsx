@@ -33,6 +33,7 @@ export default function AdminStatsPage() {
   const router = useRouter();
   const [pin, setPin] = useState<string | null>(null);
   const [stats, setStats] = useState<StatItem[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
     msg: string;
@@ -50,6 +51,7 @@ export default function AdminStatsPage() {
     });
     const json: StatsData = await res.json();
     setStats(json.stats);
+    setLoaded(true);
   }, []);
 
   const onAuth = useCallback(
@@ -85,7 +87,7 @@ export default function AdminStatsPage() {
     router.refresh();
   };
 
-  if (!pin || stats.length === 0) return <AdminPinGate onAuth={onAuth} />;
+  if (!loaded) return <AdminPinGate onAuth={onAuth} />;
 
   const inputStyle: React.CSSProperties = {
     background: "#0c0c0c",

@@ -33,6 +33,7 @@ export default function AdminCommentsPage() {
   const router = useRouter();
   const [pin, setPin] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -49,6 +50,7 @@ export default function AdminCommentsPage() {
     });
     const json: CommentsData = await res.json();
     setComments(json.comments);
+    setLoaded(true);
   }, []);
 
   const onAuth = useCallback(
@@ -84,7 +86,7 @@ export default function AdminCommentsPage() {
     });
   };
 
-  if (!pin || comments.length === 0) return <AdminPinGate onAuth={onAuth} />;
+  if (!loaded) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 900 }}>

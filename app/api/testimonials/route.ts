@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 import { checkPin } from "@/app/api/_auth";
@@ -26,6 +27,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
   writeTestimonials(body);
+  revalidatePath("/");
   return NextResponse.json(body);
 }
 
@@ -38,5 +40,6 @@ export async function POST(req: Request) {
   const newTestimonial = { ...body, id: `t${Date.now()}` };
   data.testimonials.push(newTestimonial);
   writeTestimonials(data);
+  revalidatePath("/");
   return NextResponse.json(newTestimonial, { status: 201 });
 }

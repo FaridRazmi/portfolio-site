@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 import { checkPin } from "@/app/api/_auth";
@@ -26,5 +27,6 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
   writeHero(body);
+  revalidatePath("/");
   return NextResponse.json(body);
 }

@@ -440,4 +440,20 @@ textarea:focus-visible,
   .menu-nav-link {
     font-size: clamp(2rem, 12vw, 3rem);
   }
+  .about-section {
+    padding: 4rem 1.25rem;
+  }
+  .cta-section {
+    padding: 5rem 1.25rem;
+  }
+  .footer {
+    padding: 2rem 1.25rem;
+  }
+}
+
+/* Additional component-level responsive */
+@media (max-width: 640px) {
+  .stat-number {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
 }

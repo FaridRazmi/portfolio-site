@@ -57,6 +57,7 @@ export default function AdminTestimonialsPage() {
   const router = useRouter();
   const [pin, setPin] = useState<string | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -74,6 +75,7 @@ export default function AdminTestimonialsPage() {
     });
     const json: TestimonialsData = await res.json();
     setTestimonials(json.testimonials);
+    setLoaded(true);
   }, []);
 
   const onAuth = useCallback(
@@ -106,8 +108,7 @@ export default function AdminTestimonialsPage() {
     router.refresh();
   };
 
-  if (!pin || testimonials.length === 0)
-    return <AdminPinGate onAuth={onAuth} />;
+  if (!loaded) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 900 }}>

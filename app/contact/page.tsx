@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import fs from "fs";
 import path from "path";
 import ContactPageClient from "@/app/contact/ContactPageClient";
