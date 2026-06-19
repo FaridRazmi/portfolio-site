@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 function checkPin(req: Request) {
   const auth = req.headers.get("authorization") ?? "";
@@ -9,7 +7,8 @@ function checkPin(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!checkPin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!checkPin(req))
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
@@ -17,13 +16,9 @@ export async function POST(req: Request) {
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
   const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  const base64 = Buffer.from(bytes).toString("base64");
+  const mime = file.type || "image/jpeg";
+  const dataUrl = `data:${mime};base64,${base64}`;
 
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const filename = `${Date.now()}.${ext}`;
-  const dest = path.join(process.cwd(), "public", "projects", filename);
-
-  fs.writeFileSync(dest, buffer);
-
-  return NextResponse.json({ url: `/projects/${filename}` });
+  return NextResponse.json({ url: dataUrl });
 }

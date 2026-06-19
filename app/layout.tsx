@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import fs from "fs";
-import path from "path";
+import { getSiteConfig } from "@/lib/data-store";
 import "./globals.css";
 
-function getSiteConfig() {
-  try {
-    const raw = fs.readFileSync(
-      path.join(process.cwd(), "data", "site-config.json"),
-      "utf-8",
-    );
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
 const config = getSiteConfig();
+
+const defaultTitle = "ReidTech | Software Engineer & Creative Technologist";
+const defaultDesc =
+  "Portfolio of Reid, a creative developer specializing in low-level systems, AI pipelines, and full-stack web experiences.";
+const defaultOgTitle = "Reid — Software Engineer & Creative Technologist";
+const defaultOgDesc =
+  "Building at the intersection of systems, AI, and the web.";
 
 const ogTitle =
   config?.seo?.ogTitle ?? "Reid — Software Engineer & Creative Technologist";

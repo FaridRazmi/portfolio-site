@@ -1,24 +1,11 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import fs from "fs";
-import path from "path";
 import { checkPin } from "@/app/api/_auth";
-
-const DATA_FILE = path.join(process.cwd(), "data", "contact.json");
-
-function readContact() {
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw);
-}
-
-function writeContact(data: unknown) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
-}
+import { getContact, setContact } from "@/lib/data-store";
 
 // GET /api/contact-config
 export async function GET() {
-  const contact = readContact();
-  return NextResponse.json(contact);
+  return NextResponse.json(getContact());
 }
 
 // PUT /api/contact-config
@@ -26,7 +13,7 @@ export async function PUT(req: Request) {
   if (!checkPin(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
-  writeContact(body);
+  setContact(body);
   revalidatePath("/contact");
   return NextResponse.json(body);
 }

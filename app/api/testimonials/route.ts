@@ -1,24 +1,15 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import fs from "fs";
-import path from "path";
 import { checkPin } from "@/app/api/_auth";
-
-const DATA_FILE = path.join(process.cwd(), "data", "testimonials.json");
-
-function readTestimonials() {
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw);
-}
-
-function writeTestimonials(data: unknown) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
-}
+import {
+  getTestimonials,
+  addTestimonial,
+  setTestimonials,
+} from "@/lib/data-store";
 
 // GET /api/testimonials
 export async function GET() {
-  const data = readTestimonials();
-  return NextResponse.json(data);
+  return NextResponse.json({ testimonials: getTestimonials() });
 }
 
 // PUT /api/testimonials (bulk update all testimonials)
@@ -26,7 +17,7 @@ export async function PUT(req: Request) {
   if (!checkPin(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
-  writeTestimonials(body);
+  setTestimonials(body.testimonials ?? body);
   revalidatePath("/");
   return NextResponse.json(body);
 }
@@ -36,10 +27,8 @@ export async function POST(req: Request) {
   if (!checkPin(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
-  const data = readTestimonials();
   const newTestimonial = { ...body, id: `t${Date.now()}` };
-  data.testimonials.push(newTestimonial);
-  writeTestimonials(data);
+  addTestimonial(newTestimonial);
   revalidatePath("/");
   return NextResponse.json(newTestimonial, { status: 201 });
 }

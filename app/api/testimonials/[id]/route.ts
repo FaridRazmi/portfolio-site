@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import fs from "fs";
-import path from "path";
 import { checkPin } from "@/app/api/_auth";
-
-const DATA_FILE = path.join(process.cwd(), "data", "testimonials.json");
+import {
+  getTestimonials,
+  updateTestimonial,
+  deleteTestimonial,
+} from "@/lib/data-store";
 
 // DELETE /api/testimonials/:id
 export async function DELETE(
@@ -14,12 +15,7 @@ export async function DELETE(
   if (!checkPin(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  const data = JSON.parse(raw);
-  data.testimonials = data.testimonials.filter(
-    (t: { id: string }) => t.id !== id,
-  );
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  deleteTestimonial(id);
   revalidatePath("/");
   return NextResponse.json({ ok: true });
 }
@@ -33,13 +29,10 @@ export async function PUT(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   const body = await req.json();
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  const data = JSON.parse(raw);
-  const idx = data.testimonials.findIndex((t: { id: string }) => t.id === id);
-  if (idx === -1)
+  updateTestimonial(id, body);
+  const updated = getTestimonials().find((t) => t.id === id);
+  if (!updated)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
-  data.testimonials[idx] = { ...data.testimonials[idx], ...body };
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
   revalidatePath("/");
-  return NextResponse.json(data.testimonials[idx]);
+  return NextResponse.json(updated);
 }

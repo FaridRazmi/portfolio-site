@@ -1,17 +1,6 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const DATA_FILE = path.join(process.cwd(), "data", "projects.json");
-
-function readProjects() {
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw);
-}
-
-function writeProjects(data: unknown) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
-}
+import { revalidatePath } from "next/cache";
+import { getProjects, addProject, setProjects } from "@/lib/data-store";
 
 function checkPin(req: Request) {
   const auth = req.headers.get("authorization") ?? "";
@@ -21,16 +10,16 @@ function checkPin(req: Request) {
 
 // GET /api/projects
 export async function GET() {
-  const projects = readProjects();
-  return NextResponse.json(projects);
+  return NextResponse.json(getProjects());
 }
 
 // POST /api/projects  — create new
 export async function POST(req: Request) {
-  if (!checkPin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!checkPin(req))
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const projects = readProjects();
+  const projects = getProjects();
 
   const newProject = {
     ...body,
@@ -38,18 +27,20 @@ export async function POST(req: Request) {
     order: projects.length,
   };
 
-  projects.push(newProject);
-  writeProjects(projects);
+  addProject(newProject);
+  revalidatePath("/");
 
   return NextResponse.json(newProject, { status: 201 });
 }
 
 // PUT /api/projects  — bulk reorder
 export async function PUT(req: Request) {
-  if (!checkPin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!checkPin(req))
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  writeProjects(body);
+  setProjects(body);
+  revalidatePath("/");
 
   return NextResponse.json({ ok: true });
 }

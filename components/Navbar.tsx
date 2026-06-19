@@ -1,15 +1,8 @@
-import fs from "fs";
-import path from "path";
+import { getSiteConfig } from "@/lib/data-store";
 import NavbarClient from "@/components/NavbarClient";
-import { SiteConfig } from "@/components/admin/types";
 
 export default function Navbar() {
-  const raw = fs.readFileSync(
-    path.join(process.cwd(), "data", "site-config.json"),
-    "utf-8",
-  );
-  const config: SiteConfig = JSON.parse(raw);
-
+  const config = getSiteConfig();
   return (
     <NavbarClient
       brandName={config.brandName}

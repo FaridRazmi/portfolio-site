@@ -1,14 +1,7 @@
-import fs from "fs";
-import path from "path";
+import { getTestimonials } from "@/lib/data-store";
 import TestimonialsSectionClient from "@/components/TestimonialsSectionClient";
-import { TestimonialsData } from "@/components/admin/types";
 
 export default function TestimonialsSection() {
-  const raw = fs.readFileSync(
-    path.join(process.cwd(), "data", "testimonials.json"),
-    "utf-8",
-  );
-  const data: TestimonialsData = JSON.parse(raw);
-
+  const data = { testimonials: getTestimonials() };
   return <TestimonialsSectionClient data={data} />;
 }
