@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { getSiteConfig } from "@/lib/data-store";
 import "./globals.css";
-
-const config = getSiteConfig();
 
 const defaultTitle = "ReidTech | Software Engineer & Creative Technologist";
 const defaultDesc =
@@ -11,62 +9,66 @@ const defaultOgTitle = "Reid — Software Engineer & Creative Technologist";
 const defaultOgDesc =
   "Building at the intersection of systems, AI, and the web.";
 
-const ogTitle =
-  config?.seo?.ogTitle ?? "Reid — Software Engineer & Creative Technologist";
-const ogDescription =
-  config?.seo?.ogDescription ??
-  "Building at the intersection of systems, AI, and the web.";
-const title =
-  config?.seo?.title ?? "ReidTech | Software Engineer & Creative Technologist";
-const description =
-  config?.seo?.description ??
-  "Portfolio of Reid, a creative developer specializing in low-level systems, AI pipelines, and full-stack web experiences.";
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSiteConfig();
+  const ogTitle =
+    config?.seo?.ogTitle ?? defaultOgTitle;
+  const ogDescription =
+    config?.seo?.ogDescription ?? defaultOgDesc;
+  const title =
+    config?.seo?.title ?? defaultTitle;
+  const description =
+    config?.seo?.description ?? defaultDesc;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  metadataBase: new URL("https://reidworks.my"),
-  alternates: {
-    canonical: "/",
-  },
-  keywords: config?.seo?.keywords ?? [
-    "portfolio",
-    "software engineer",
-    "cloud engineer",
-    "network engineer",
-    "Next.js",
-    "Python",
-    "Farid Razmi",
-    "IIUM",
-  ],
-  openGraph: {
-    title: ogTitle,
-    description: ogDescription,
-    type: "website",
-    url: "https://reidworks.my",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: ogTitle,
-      },
+  return {
+    title,
+    description,
+    metadataBase: new URL("https://reidworks.my"),
+    alternates: {
+      canonical: "/",
+    },
+    keywords: config?.seo?.keywords ?? [
+      "portfolio",
+      "software engineer",
+      "cloud engineer",
+      "network engineer",
+      "Next.js",
+      "Python",
+      "Farid Razmi",
+      "IIUM",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: ogTitle,
-    description: ogDescription,
-    images: ["/og-image.png"],
-  },
-};
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      type: "website",
+      url: "https://reidworks.my",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: ogTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: ogDescription,
+      images: ["/og-image.png"],
+    },
+  };
+}
 
-export const viewport: import("next").Viewport = {
-  themeColor: config?.seo?.themeColor ?? "#0c0c0c",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-};
+export async function generateViewport(): Promise<Viewport> {
+  const config = await getSiteConfig();
+  return {
+    themeColor: config?.seo?.themeColor ?? "#0c0c0c",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  };
+}
 
 const jsonLd = {
   "@context": "https://schema.org",

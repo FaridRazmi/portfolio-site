@@ -55,7 +55,6 @@ const labelStyle: React.CSSProperties = {
 
 export default function AdminTestimonialsPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
@@ -69,28 +68,21 @@ export default function AdminTestimonialsPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/testimonials", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/testimonials");
     const json: TestimonialsData = await res.json();
     setTestimonials(json.testimonials);
     setLoaded(true);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (t: Testimonial) => {
     if (!confirm(`Delete testimonial from "${t.name}"?`)) return;
     await fetch(`/api/testimonials/${t.id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${pin}` },
     });
     setTestimonials((ts) => ts.filter((x) => x.id !== t.id));
     showToast("Testimonial deleted");
@@ -234,7 +226,6 @@ export default function AdminTestimonialsPage() {
       {panel !== null && (
         <TestimonialFormPanel
           testimonial={panel === "new" ? undefined : (panel as Testimonial)}
-          pin={pin!}
           onSave={handleSave}
           onClose={() => setPanel(null)}
         />
@@ -247,12 +238,10 @@ export default function AdminTestimonialsPage() {
 
 function TestimonialFormPanel({
   testimonial,
-  pin,
   onSave,
   onClose,
 }: {
   testimonial?: Testimonial;
-  pin: string;
   onSave: (t: Testimonial) => void;
   onClose: () => void;
 }) {
@@ -274,7 +263,6 @@ function TestimonialFormPanel({
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify(form),
     });

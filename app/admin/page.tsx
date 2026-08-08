@@ -41,13 +41,13 @@ const CARDS = [
 ];
 
 export default function AdminDashboard() {
-  const [pin, setPin] = useState<string | null>(null);
+  const [authed, setAuthed] = useState(false);
 
-  const onAuth = useCallback((p: string) => {
-    setPin(p);
+  const onAuth = useCallback(() => {
+    setAuthed(true);
   }, []);
 
-  if (!pin) return <AdminPinGate onAuth={onAuth} />;
+  if (!authed) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "3rem 2rem" }}>

@@ -1,4 +1,7 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# reidworks.my — Portfolio
+
+Next.js portfolio of Farid Razmi, student at IIUM Gombak, aspiring cloud &
+network engineer.
 
 ## Getting Started
 
@@ -6,31 +9,59 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file (or configure them in Vercel):
 
-## Learn More
+```
+# Required for the admin panel to work. Must be set or admin auth fails closed.
+ADMIN_PIN=your-secret-pin
 
-To learn more about Next.js, take a look at the following resources:
+# Optional: enables durable storage via Supabase Postgres.
+# Without these, the site falls back to the bundled data/*.json files and
+# admin edits only last for the lifetime of the server process.
+SUPABASE_URL=https://<project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> `SUPABASE_SERVICE_ROLE_KEY` is a server-only secret. Never expose it to the
+> browser — it must not be prefixed with `NEXT_PUBLIC_`. The site only uses it
+> from server-side API routes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Setting up Supabase (durable content storage)
 
-## Deploy on Vercel
+1. Create a project at [supabase.com](https://supabase.com).
+2. Open **SQL Editor** and run the contents of `supabase/schema.sql`. This
+   creates a single `content` table (key → JSON payload) with row-level
+   security disabled for the service role.
+3. Copy the project URL and Service Role key from **Project Settings → API**
+   into `.env.local` / Vercel as `SUPABASE_URL` and
+   `SUPABASE_SERVICE_ROLE_KEY`.
+4. Seed the initial content from the bundled JSON files:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npx tsx scripts/seed-supabase.ts
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Restart `npm run dev` (or redeploy) so the store picks up the variables.
+
+Once configured, edits made in `/admin` persist in Postgres and survive
+serverless cold starts / redeploys.
+
+## Admin
+
+- Panel: `https://reidworks.my/admin`
+- Sign in with `ADMIN_PIN`. The server issues an httpOnly signed session cookie
+  (7-day expiry). `Authorization: Bearer <pin>` also works against the API.
+- The `robots.txt` file disallows `/admin` from search engines.
+
+## SEO / Deployment
+
+- Canonical domain: `https://reidworks.my` (`app/layout.tsx`, `app/sitemap.ts`,
+  `app/robots.ts`).
+- After deploying to Vercel, verify the domain in Google Search Console and
+  submit `https://reidworks.my/sitemap.xml`.

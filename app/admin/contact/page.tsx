@@ -55,7 +55,6 @@ const labelStyle: React.CSSProperties = {
 
 export default function AdminContactPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [data, setData] = useState<ContactData | null>(null);
   const [form, setForm] = useState<ContactData>({
     heading: "",
@@ -77,22 +76,16 @@ export default function AdminContactPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/contact-config", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/contact-config");
     const json: ContactData = await res.json();
     setData(json);
     setForm(json);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const update = (field: keyof ContactData, val: string) => {
     setForm((f) => ({ ...f, [field]: val }));
@@ -104,7 +97,6 @@ export default function AdminContactPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify(form),
     });
@@ -114,7 +106,7 @@ export default function AdminContactPage() {
     router.refresh();
   };
 
-  if (!pin || !data) return <AdminPinGate onAuth={onAuth} />;
+  if (!data) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 700 }}>

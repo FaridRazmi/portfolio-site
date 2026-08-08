@@ -31,7 +31,6 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
 
 export default function AdminCommentsPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
@@ -44,22 +43,16 @@ export default function AdminCommentsPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/comments", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/comments");
     const json: CommentsData = await res.json();
     setComments(json.comments);
     setLoaded(true);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (c: Comment) => {
     if (!confirm(`Delete comment from "${c.name}"?`)) return;
@@ -67,7 +60,6 @@ export default function AdminCommentsPage() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify({ id: c.id }),
     });

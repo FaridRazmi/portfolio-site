@@ -55,7 +55,6 @@ const labelStyle: React.CSSProperties = {
 
 export default function AdminSettingsPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [config, setConfig] = useState<SiteConfig | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
@@ -68,21 +67,15 @@ export default function AdminSettingsPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/site-config", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/site-config");
     const json: SiteConfig = await res.json();
     setConfig(json);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const updateNavLink = (idx: number, field: keyof NavLink, val: string) => {
     if (!config) return;
@@ -148,7 +141,6 @@ export default function AdminSettingsPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify(config),
     });
@@ -157,7 +149,7 @@ export default function AdminSettingsPage() {
     router.refresh();
   };
 
-  if (!pin || !config) return <AdminPinGate onAuth={onAuth} />;
+  if (!config) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 800 }}>

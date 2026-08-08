@@ -32,9 +32,9 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
 
 export default function AdminProjectsPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [panel, setPanel] = useState<"new" | Project | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -45,26 +45,18 @@ export default function AdminProjectsPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchProjects = useCallback(
-    async (authPin: string) => {
-      setLoading(true);
-      const res = await fetch("/api/projects", {
-        headers: { Authorization: `Bearer ${authPin}` },
-      });
-      const data = await res.json();
-      setProjects(data.sort((a: Project, b: Project) => a.order - b.order));
-      setLoading(false);
-    },
-    [],
-  );
+  const fetchProjects = useCallback(async () => {
+    setLoading(true);
+    const res = await fetch("/api/projects");
+    const data = await res.json();
+    setProjects(data.sort((a: Project, b: Project) => a.order - b.order));
+    setLoading(false);
+    setLoaded(true);
+  }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchProjects(p);
-    },
-    [fetchProjects],
-  );
+  const onAuth = useCallback(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const saveReorder = async (ordered: Project[]) => {
     const updated = ordered.map((p, i) => ({ ...p, order: i }));
@@ -73,7 +65,6 @@ export default function AdminProjectsPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify(updated),
     });
@@ -84,7 +75,6 @@ export default function AdminProjectsPage() {
     if (!confirm(`Delete "${project.title}"?`)) return;
     await fetch(`/api/projects/${project.id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${pin}` },
     });
     setProjects((ps) => ps.filter((p) => p.id !== project.id));
     showToast("Project deleted");
@@ -124,7 +114,7 @@ export default function AdminProjectsPage() {
     saveReorder(list);
   };
 
-  if (!pin) return <AdminPinGate onAuth={onAuth} />;
+  if (!loaded) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div
@@ -487,7 +477,6 @@ export default function AdminProjectsPage() {
       {panel !== null && (
         <ProjectFormPanel
           project={panel === "new" ? undefined : (panel as Project)}
-          pin={pin!}
           onSave={handleSave}
           onClose={() => setPanel(null)}
         />

@@ -2,27 +2,42 @@
 import { useState, useEffect } from "react";
 
 interface Props {
-  onAuth: (pin: string) => void;
+  onAuth: () => void;
 }
 
 export default function AdminPinGate({ onAuth }: Props) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
+  const [checking, setChecking] = useState(true);
 
+  // On mount, check whether an httpOnly session cookie already exists.
+  // The PIN is never stored in sessionStorage/localStorage — only the
+  // server-issued signed cookie grants access.
   useEffect(() => {
-    const saved = sessionStorage.getItem("admin_pin");
-    if (saved) onAuth(saved);
+    let cancelled = false;
+    fetch("/api/admin/session")
+      .then((r) => {
+        if (!cancelled && r.ok) onAuth();
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setChecking(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [onAuth]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/projects", {
-      headers: { Authorization: `Bearer ${pin}` },
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin }),
     });
     if (res.ok) {
-      sessionStorage.setItem("admin_pin", pin);
-      onAuth(pin);
+      onAuth();
     } else {
       setError(true);
       setShake(true);
@@ -30,6 +45,26 @@ export default function AdminPinGate({ onAuth }: Props) {
       setPin("");
     }
   };
+
+  if (checking) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#0c0c0c",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#555",
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: "0.85rem",
+          letterSpacing: "0.08em",
+        }}
+      >
+        Checking…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -68,22 +103,6 @@ export default function AdminPinGate({ onAuth }: Props) {
         `}</style>
 
         <div>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              background: "rgba(200,241,53,0.1)",
-              border: "1px solid rgba(200,241,53,0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "1.25rem",
-              fontSize: "1.2rem",
-            }}
-          >
-            Welcome Reid
-          </div>
           <h1
             style={{
               fontFamily: "'Space Grotesk', sans-serif",

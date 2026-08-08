@@ -55,7 +55,6 @@ const labelStyle: React.CSSProperties = {
 
 export default function AdminAboutPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [data, setData] = useState<AboutData | null>(null);
   const [bioText, setBioText] = useState("");
   const [details, setDetails] = useState([{ label: "", value: "" }]);
@@ -72,10 +71,8 @@ export default function AdminAboutPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/about", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/about");
     const json: AboutData = await res.json();
     setData(json);
     setBioText(json.bioWords.join(" "));
@@ -85,13 +82,9 @@ export default function AdminAboutPage() {
     setTechStack(json.techStack);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const addDetail = () => setDetails((d) => [...d, { label: "", value: "" }]);
   const removeDetail = (i: number) =>
@@ -122,7 +115,6 @@ export default function AdminAboutPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify(payload),
     });
@@ -132,7 +124,7 @@ export default function AdminAboutPage() {
     router.refresh();
   };
 
-  if (!pin || !data) return <AdminPinGate onAuth={onAuth} />;
+  if (!data) return <AdminPinGate onAuth={onAuth} />;
 
   return (
     <div style={{ padding: "2.5rem 2rem", maxWidth: 800 }}>

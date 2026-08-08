@@ -55,7 +55,6 @@ const labelStyle: React.CSSProperties = {
 
 export default function AdminHeroPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [overlays, setOverlays] = useState<HeroOverlay[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<{
@@ -69,22 +68,16 @@ export default function AdminHeroPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/hero", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/hero");
     const json: HeroData = await res.json();
     setOverlays(json.overlays);
     setLoaded(true);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const updateOverlay = (
     idx: number,
@@ -102,7 +95,6 @@ export default function AdminHeroPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify({ overlays }),
     });

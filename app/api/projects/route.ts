@@ -1,41 +1,56 @@
 import { NextResponse } from "next/server";
-import { getProjects, addProject, setProjects } from "@/lib/data-store";
-
-function checkPin(req: Request) {
-  const auth = req.headers.get("authorization") ?? "";
-  const pin = process.env.ADMIN_PIN ?? "1234";
-  return auth === `Bearer ${pin}`;
-}
+import {
+  getProjects,
+  addProject,
+  setProjects,
+  type Project,
+} from "@/lib/data-store";
+import { isAuthorized } from "@/app/api/_auth";
+import { validateProject } from "@/lib/validation";
 
 // GET /api/projects
 export async function GET() {
-  return NextResponse.json(getProjects());
+  return NextResponse.json(await getProjects());
 }
 
 // POST /api/projects  — create new
 export async function POST(req: Request) {
-  if (!checkPin(req))
+  if (!isAuthorized(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json();
-  const projects = getProjects();
+  const body = await req.json().catch(() => null);
+  const project = validateProject(body, false);
+  if (!project)
+    return NextResponse.json({ error: "Invalid project data" }, { status: 400 });
 
-  const newProject = {
-    ...body,
+  const existing = await getProjects();
+  const newProject: Project = {
     id: `p-${Date.now()}`,
-    order: projects.length,
+    order: existing.length,
+    tags: [],
+    col: 1,
+    row: 1,
+    colSpan: 4,
+    rowSpan: 1,
+    accent: "#c8f135",
+    link: "",
+    image: "",
+    ...project,
   };
 
-  addProject(newProject);
+  await addProject(newProject);
   return NextResponse.json(newProject, { status: 201 });
 }
 
 // PUT /api/projects  — bulk reorder
 export async function PUT(req: Request) {
-  if (!checkPin(req))
+  if (!isAuthorized(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json();
-  setProjects(body);
+  const body = await req.json().catch(() => null);
+  if (!Array.isArray(body) || body.some((p) => !validateProject(p, true)))
+    return NextResponse.json({ error: "Invalid project list" }, { status: 400 });
+
+  await setProjects(body);
   return NextResponse.json({ ok: true });
 }

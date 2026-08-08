@@ -5,7 +5,6 @@ import ProjectCardPreview from "./ProjectCardPreview";
 
 interface Props {
   project?: Project;
-  pin: string;
   onSave: (p: Project) => void;
   onClose: () => void;
 }
@@ -83,7 +82,7 @@ function GridEditorCell({
   );
 }
 
-export default function ProjectFormPanel({ project, pin, onSave, onClose }: Props) {
+export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
   const isEdit = !!project;
   const [form, setForm] = useState<Omit<Project, "id" | "order">>(
     project
@@ -125,7 +124,6 @@ export default function ProjectFormPanel({ project, pin, onSave, onClose }: Prop
     fd.append("file", file);
     const res = await fetch("/api/projects/upload", {
       method: "POST",
-      headers: { Authorization: `Bearer ${pin}` },
       body: fd,
     });
     const data = await res.json();
@@ -156,7 +154,6 @@ export default function ProjectFormPanel({ project, pin, onSave, onClose }: Prop
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify({
         ...form,

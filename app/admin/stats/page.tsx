@@ -31,7 +31,6 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
 
 export default function AdminStatsPage() {
   const router = useRouter();
-  const [pin, setPin] = useState<string | null>(null);
   const [stats, setStats] = useState<StatItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -45,22 +44,16 @@ export default function AdminStatsPage() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchData = useCallback(async (authPin: string) => {
-    const res = await fetch("/api/stats", {
-      headers: { Authorization: `Bearer ${authPin}` },
-    });
+  const fetchData = useCallback(async () => {
+    const res = await fetch("/api/stats");
     const json: StatsData = await res.json();
     setStats(json.stats);
     setLoaded(true);
   }, []);
 
-  const onAuth = useCallback(
-    (p: string) => {
-      setPin(p);
-      fetchData(p);
-    },
-    [fetchData],
-  );
+  const onAuth = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const updateStat = (
     idx: number,
@@ -78,7 +71,6 @@ export default function AdminStatsPage() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${pin}`,
       },
       body: JSON.stringify({ stats }),
     });

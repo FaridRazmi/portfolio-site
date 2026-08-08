@@ -1,27 +1,32 @@
 import { NextResponse } from "next/server";
-import { getProjects, updateProject, deleteProject } from "@/lib/data-store";
-
-function checkPin(req: Request) {
-  const auth = req.headers.get("authorization") ?? "";
-  const pin = process.env.ADMIN_PIN ?? "1234";
-  return auth === `Bearer ${pin}`;
-}
+import {
+  getProjects,
+  updateProject,
+  deleteProject,
+} from "@/lib/data-store";
+import { isAuthorized } from "@/app/api/_auth";
+import { validateProject } from "@/lib/validation";
 
 // PUT /api/projects/[id]
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!checkPin(req))
+  if (!isAuthorized(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const body = await req.json();
-  updateProject(id, body);
-  const updated = getProjects().find((p) => p.id === id);
-  if (!updated)
+  const body = await req.json().catch(() => null);
+  const patch = validateProject(body, true);
+  if (!patch)
+    return NextResponse.json({ error: "Invalid project data" }, { status: 400 });
+
+  const projects = await getProjects();
+  if (!projects.find((p) => p.id === id))
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  await updateProject(id, patch);
+  const updated = (await getProjects()).find((p) => p.id === id);
   return NextResponse.json(updated);
 }
 
@@ -30,14 +35,14 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!checkPin(req))
+  if (!isAuthorized(req))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const exists = getProjects().find((p) => p.id === id);
+  const exists = (await getProjects()).find((p) => p.id === id);
   if (!exists)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  deleteProject(id);
+  await deleteProject(id);
   return NextResponse.json({ ok: true });
 }
