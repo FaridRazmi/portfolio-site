@@ -6,6 +6,10 @@ const Preloader = dynamic(() => import("@/components/Preloader"), {
   ssr: false,
 });
 
+const SequenceScroll = dynamic(() => import("@/components/SequenceScroll"), {
+  ssr: false,
+});
+
 interface Props {
   projectsSlot: React.ReactNode;
   aboutSlot: React.ReactNode;
@@ -14,7 +18,7 @@ interface Props {
   commentsSlot: React.ReactNode;
   footerSlot: React.ReactNode;
   navbarSlot: React.ReactNode;
-  sequenceScrollSlot: React.ReactNode;
+  sequenceScrollSlot?: React.ReactNode;
   auroraDividerSlot: React.ReactNode;
 }
 
@@ -26,7 +30,6 @@ export default function HomeClient({
   commentsSlot,
   footerSlot,
   navbarSlot,
-  sequenceScrollSlot,
   auroraDividerSlot,
 }: Props) {
   const [showPreloader, setShowPreloader] = useState(true);
@@ -42,7 +45,7 @@ export default function HomeClient({
       )}
 
       {navbarSlot}
-      {sequenceScrollSlot}
+      <SequenceScroll />
 
       <div
         style={{ position: "relative", zIndex: 10, background: "var(--bg)" }}
