@@ -1,4 +1,6 @@
 "use client";
+
+import Link from "next/link";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { NavLink, SocialLink } from "@/components/admin/types";
@@ -23,10 +25,10 @@ export default function NavbarClient({
   return (
     <>
       <nav className="navbar">
-        <a href="/" className="nav-logo" onClick={close}>
+        <Link href="/" className="nav-logo" onClick={close}>
           {brandName}
           <span style={{ color: "var(--accent)" }}>{brandSuffix}</span>
-        </a>
+        </Link>
 
         {/* Desktop nav links — hidden on mobile */}
         <div className="nav-desktop-links">

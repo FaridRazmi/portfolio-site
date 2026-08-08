@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image";
 import { useRef } from "react";
 import { motion } from "motion/react";
 import { Project } from "@/components/admin/types";
@@ -51,12 +53,15 @@ function ProjectCard({ project }: { project: Project }) {
             overflow: "hidden",
             marginBottom: "0.75rem",
             background: "#0c0c0c",
+            position: "relative",
           }}
         >
-          <img
+          <Image
             src={project.image}
             alt={project.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
           />
         </div>
       )}

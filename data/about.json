@@ -1,68 +1,59 @@
 {
-  "name": "Reid",
+  "name": "Farid Razmi",
   "bioWords": [
-    "Reid",
+    "Farid",
+    "Razmi",
     "is",
-    "a",
-    "creative",
-    "developer",
+    "an",
+    "aspiring",
+    "cloud",
+    "engineer",
+    "and",
+    "network",
+    "engineer",
+    "studying",
+    "at",
+    "IIUM",
+    "Gombak,",
     "building",
     "at",
     "the",
     "intersection",
     "of",
     "systems",
-    "programming,",
-    "AI,",
+    "infrastructure,",
+    "networking,",
     "and",
     "the",
     "open",
-    "web.",
-    "Fueled",
-    "by",
-    "curiosity",
-    "and",
-    "a",
-    "relentless",
-    "drive",
-    "to",
-    "push",
-    "pixels",
-    "and",
-    "packets",
-    "further",
-    "than",
-    "they've",
-    "ever",
-    "gone."
+    "web."
   ],
   "details": [
     {
       "label": "Location",
-      "value": "Kota Bharu, United Kelantan"
+      "value": "Gombak, Malaysia"
     },
     {
       "label": "Focus",
-      "value": "Systems Security, AI & Web"
+      "value": "Cloud Engineering & Networking"
     },
     {
       "label": "Status",
-      "value": "Student In CFS IIUM , Waiting For Degree "
+      "value": "Student at IIUM Gombak"
     },
     {
-      "label": "Education (Soon) ",
-      "value": "Degree of Computer Science"
+      "label": "Education",
+      "value": "Computer Science (IIUM)"
     }
   ],
   "techStack": [
+    "Cloud Computing",
+    "Networking",
     "C++",
     "Python",
     "JavaScript",
     "TypeScript",
-    "PyTorch",
     "Next.js",
-    "Rust",
-    "FastAPI",
     "Docker",
     "Linux",
     "Git"

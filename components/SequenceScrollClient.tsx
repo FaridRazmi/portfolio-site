@@ -21,10 +21,16 @@ function Scene({
   const particlesCount = 2000;
   const particlesPosition = useMemo(() => {
     const p = new Float32Array(particlesCount * 3);
+    // Simple LCG pseudo-random generator to remain pure during render
+    let seed = 1;
+    const lcg = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
     for (let i = 0; i < particlesCount; i++) {
-      p[i * 3 + 0] = (Math.random() - 0.5) * 40;
-      p[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 40;
+      p[i * 3 + 0] = (lcg() - 0.5) * 40;
+      p[i * 3 + 1] = (lcg() - 0.5) * 40;
+      p[i * 3 + 2] = (lcg() - 0.5) * 40;
     }
     return p;
   }, []);
@@ -385,25 +391,47 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                   </div>
 
                   {/* Heading with gradient fill */}
-                  <h2
-                    style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
-                      fontWeight: 800,
-                      letterSpacing: "-0.04em",
-                      lineHeight: 1.05,
-                      whiteSpace: "pre-line",
-                      background:
-                        "linear-gradient(160deg, #ffffff 0%, #d8d8d8 45%, rgba(200,241,53,0.85) 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      filter:
-                        "drop-shadow(0 2px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 32px rgba(200,241,53,0.14))",
-                    }}
-                  >
-                    {item.heading}
-                  </h2>
+                  {i === 0 ? (
+                    <h1
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
+                        fontWeight: 800,
+                        letterSpacing: "-0.04em",
+                        lineHeight: 1.05,
+                        whiteSpace: "pre-line",
+                        background:
+                          "linear-gradient(160deg, #ffffff 0%, #d8d8d8 45%, rgba(200,241,53,0.85) 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        filter:
+                          "drop-shadow(0 2px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 32px rgba(200,241,53,0.14))",
+                      }}
+                    >
+                      {item.heading}
+                    </h1>
+                  ) : (
+                    <h2
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
+                        fontWeight: 800,
+                        letterSpacing: "-0.04em",
+                        lineHeight: 1.05,
+                        whiteSpace: "pre-line",
+                        background:
+                          "linear-gradient(160deg, #ffffff 0%, #d8d8d8 45%, rgba(200,241,53,0.85) 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        filter:
+                          "drop-shadow(0 2px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 32px rgba(200,241,53,0.14))",
+                      }}
+                    >
+                      {item.heading}
+                    </h2>
+                  )}
 
                   {/* Divider line */}
                   <div

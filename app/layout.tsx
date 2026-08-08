@@ -25,19 +25,25 @@ const description =
 export const metadata: Metadata = {
   title,
   description,
+  metadataBase: new URL("https://reidworks.my"),
+  alternates: {
+    canonical: "/",
+  },
   keywords: config?.seo?.keywords ?? [
     "portfolio",
     "software engineer",
-    "C++",
-    "AI",
+    "cloud engineer",
+    "network engineer",
     "Next.js",
     "Python",
+    "Farid Razmi",
+    "IIUM",
   ],
   openGraph: {
     title: ogTitle,
     description: ogDescription,
     type: "website",
-    url: "https://reidtech.dev",
+    url: "https://reidworks.my",
     images: [
       {
         url: "/og-image.png",
@@ -65,20 +71,27 @@ export const viewport: import("next").Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Reid",
-  givenName: "Reid",
-  url: "https://reidtech.dev",
-  jobTitle: "Software Engineer & Creative Technologist",
+  name: "Farid Razmi",
+  givenName: "Farid",
+  familyName: "Razmi",
+  url: "https://reidworks.my",
+  jobTitle: "Cloud & Network Engineer",
   description:
-    "Software engineer specializing in low-level systems, AI pipelines, and full-stack web experiences.",
+    "Student at IIUM Gombak and aspiring cloud engineer or network engineer.",
+  alumniOf: {
+    "@type": "EducationalOrganization",
+    "name": "International Islamic University Malaysia",
+    "alternateName": "IIUM"
+  },
   knowsAbout: [
+    "Cloud Engineering",
+    "Network Engineering",
+    "Systems Security",
     "C++",
     "Python",
     "AI",
-    "Machine Learning",
     "Full-Stack Development",
-    "Next.js",
-    "PyTorch",
+    "Next.js"
   ],
   sameAs: ["https://github.com/FaridRazmi", "https://linkedin.com"],
 };
