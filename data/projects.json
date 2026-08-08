@@ -1,13 +1,13 @@
 [
   {
     "id": "p1",
-    "title": "ESP32 IoT Gateway",
-    "description": "Custom firmware for ESP32 microcontroller integrating BLE/WiFi sensor aggregation, MQTT pub-sub, and OTA updates. Written in C++ with FreeRTOS.",
+    "title": "Multi-Region Cloud Network Gateway",
+    "description": "Architected a high-availability multi-region hybrid cloud network routing architecture on AWS/Azure, optimizing packet routing, IPSec VPN tunnels, and transit gateways with Terraform infrastructure-as-code.",
     "tags": [
-      "C++",
-      "FreeRTOS",
-      "MQTT",
-      "ESP32"
+      "AWS",
+      "Azure",
+      "Terraform",
+      "Network Engineering"
     ],
     "col": 1,
     "row": 1,
@@ -20,13 +20,13 @@
   },
   {
     "id": "p2",
-    "title": "AI Image Generator",
-    "description": "Developed an AI-based image generation tool that converts text prompts into images",
+    "title": "Secure Zero Trust Overlay Network",
+    "description": "Designed and deployed a WireGuard-based Zero Trust Network Access (ZTNA) overlay featuring automated ACL policies, micro-segmentation, and key rotation.",
     "tags": [
-      "PyTorch",
-      "Diffusers",
-      "FastAPI",
-      "LoRA"
+      "WireGuard",
+      "Linux",
+      "Networking",
+      "Security"
     ],
     "col": 6,
     "row": 1,
@@ -39,13 +39,13 @@
   },
   {
     "id": "p3",
-    "title": "ReidTech SaaS",
-    "description": "Full-stack Next.js SaaS platform with Stripe, Supabase auth, and role-based access control. Deployed on Vercel Edge",
+    "title": "Automated CI/CD GitOps Pipeline",
+    "description": "Kubernetes GitOps deployment architecture with ArgoCD, Docker container registry, and Prometheus monitoring on self-hosted servers.",
     "tags": [
-      "Next.js",
-      "Supabase",
-      "Stripe",
-      "TypeScript"
+      "Kubernetes",
+      "ArgoCD",
+      "Docker",
+      "Prometheus"
     ],
     "col": 10,
     "row": 1,
@@ -58,13 +58,13 @@
   },
   {
     "id": "p4",
-    "title": "User Location Email Sender Web App",
-    "description": "Developed a web application that detects a user's location using browser geolocation and automatically sends the location data via Gmail",
+    "title": "SDN Controller & Traffic Shaper",
+    "description": "Software-Defined Networking controller implementing custom OpenFlow traffic shaping policies to mitigate congestion and handle packet priority queues dynamically.",
     "tags": [
-      "Javascript",
-      "Geolocation API",
-      "EmailJS",
-      "Gmail"
+      "Python",
+      "SDN",
+      "OpenFlow",
+      "Linux Kernels"
     ],
     "col": 6,
     "row": 2,
@@ -77,12 +77,12 @@
   },
   {
     "id": "p5",
-    "title": "CLI Dev Tooling",
-    "description": "Custom Rust-based CLI tool that automates git workflows, scaffolding, and deploys across environments.",
+    "title": "Low-Latency Network Monitor",
+    "description": "Custom Rust-based low-latency network diagnostic CLI tool for tracking packet loss, round-trip times, and hop counts across WAN routes.",
     "tags": [
       "Rust",
       "CLI",
-      "Git",
+      "Networking",
       "DevOps"
     ],
     "col": 1,
@@ -96,13 +96,13 @@
   },
   {
     "id": "p6",
-    "title": "Real-Time Hand Sign to Text Recognition",
-    "description": "Developed a real-time hand sign recognition system that converts hand gestures into text using computer vision and machine learning",
+    "title": "Packet Capture & Deep Packet Inspection",
+    "description": "High-performance Python/C packet capture engine doing deep packet inspection and network threat analysis on live network interfaces.",
     "tags": [
+      "C",
       "Python",
-      "OpenCV",
-      "MediaPipe",
-      "TensorFlow"
+      "Scapy",
+      "Cybersecurity"
     ],
     "col": 5,
     "row": 3,
@@ -115,13 +115,12 @@
   },
   {
     "id": "p7",
-    "title": "Portfolio OS",
-    "description": "This very site — a scrollytelling Next.js portfolio with scroll-linked 3D frame sequences and Awwwards-grade UI.",
+    "title": "Cloud Portfolio Infrastructure",
+    "description": "This Next.js portfolio website deployed at scale on serverless edge with sitemaps, robots configurations, optimized Core Web Vitals, and complete structured data.",
     "tags": [
       "Next.js",
-      "Motion",
-      "Canvas",
-      "Lenis"
+      "Edge Infrastructure",
+      "SEO Architecture"
     ],
     "col": 9,
     "row": 3,

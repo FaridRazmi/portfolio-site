@@ -1,15 +1,17 @@
 export const dynamic = "force-dynamic";
 
-import ProjectsSection from "@/components/ProjectsSection";
+import dynamicImport from "next/dynamic";
 import AboutSection from "@/components/AboutSection";
 import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CommentsSection from "@/components/CommentsSection";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import SequenceScroll from "@/components/SequenceScroll";
 import AuroraDivider from "@/components/AuroraDivider";
 import HomeClient from "@/components/HomeClient";
+
+const ProjectsSection = dynamicImport(() => import("@/components/ProjectsSection"), { ssr: false });
+const SequenceScroll = dynamicImport(() => import("@/components/SequenceScroll"), { ssr: false });
 
 export default function Home() {
   return (
