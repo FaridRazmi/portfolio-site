@@ -10,7 +10,7 @@ const WINDOW_MS = 1000 * 60 * 5; // 5 minutes
 // lockout would require a DB table — documented in README.
 const attempts: Map<string, { count: number; firstAt: number }> = new Map();
 
-function clientIp(req: Request): string {
+export function clientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
   return req.headers.get("x-real-ip") ?? "unknown";
@@ -33,7 +33,7 @@ function timingSafeEqualStr(a: string, b: string): boolean {
   return crypto.timingSafeEqual(bufA, bufB);
 }
 
-function isRateLimited(ip: string): boolean {
+export function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = attempts.get(ip);
   if (!entry) return false;
@@ -44,7 +44,7 @@ function isRateLimited(ip: string): boolean {
   return entry.count >= MAX_ATTEMPTS;
 }
 
-function recordFailure(ip: string) {
+export function recordFailure(ip: string) {
   const now = Date.now();
   const entry = attempts.get(ip);
   if (!entry || now - entry.firstAt > WINDOW_MS) {
@@ -95,9 +95,9 @@ export function checkPin(req: Request): boolean {
 // ---------- Session cookie ----------
 
 function sessionSecret(): string {
-  // Reuse ADMIN_PIN as the signing secret if ADMIN_AUTH_SECRET isn't set,
-  // so a single env var is sufficient to enable sessions.
-  return process.env.ADMIN_AUTH_SECRET ?? getAdminPin() ?? "";
+  // ADMIN_AUTH_SECRET is required. Signing sessions with the (short) PIN
+  // would let anyone who sees a cookie brute-force the secret offline.
+  return process.env.ADMIN_AUTH_SECRET ?? "";
 }
 
 export function issueSessionToken(): string {
@@ -111,10 +111,12 @@ export function issueSessionToken(): string {
 }
 
 export function verifySessionToken(token: string): boolean {
+  const secret = sessionSecret();
+  if (!secret) return false; // fail closed when unconfigured
   const [payload, sig] = token.split(".");
   if (!payload || !sig) return false;
   const expected = crypto
-    .createHmac("sha256", sessionSecret())
+    .createHmac("sha256", secret)
     .update(payload)
     .digest("base64url");
   const a = Buffer.from(sig);
@@ -130,6 +132,8 @@ export function verifySessionToken(token: string): boolean {
 }
 
 export function sessionCookieHeader(): string {
+  if (!sessionSecret())
+    throw new Error("ADMIN_AUTH_SECRET is not set — cannot issue admin sessions");
   return `${COOKIE_NAME}=${issueSessionToken()}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
 }
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const SECTIONS = [
@@ -134,7 +135,7 @@ export default function AdminSidebar() {
             marginBottom: "1rem",
           }}
         >
-          <a
+          <Link
             href="/"
             style={{
               fontFamily: "var(--font-heading)",
@@ -159,7 +160,7 @@ export default function AdminSidebar() {
             >
               ADMIN
             </span>
-          </a>
+          </Link>
         </div>
 
         <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>

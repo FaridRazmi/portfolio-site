@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AdminPinGate from "@/components/admin/AdminPinGate";
 import ProjectFormPanel from "@/components/admin/ProjectFormPanel";
@@ -141,7 +142,7 @@ export default function AdminProjectsPage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <a
+          <Link
             href="/"
             style={{
               color: "#444",
@@ -154,7 +155,7 @@ export default function AdminProjectsPage() {
             }}
           >
             ← Portfolio
-          </a>
+          </Link>
           <span style={{ color: "#222" }}>|</span>
           <span
             style={{

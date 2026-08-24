@@ -1,11 +1,27 @@
 import { NextResponse } from 'next/server';
+import { clientIp, isRateLimited, recordFailure } from '@/app/api/_auth';
 
 export async function POST(req: Request) {
   try {
+    const ip = clientIp(req);
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+    }
+
     const { name, email, message } = await req.json();
 
     if (!name || !email || !message) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+    }
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof message !== "string" ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      name.length > 200 ||
+      message.length > 5000
+    ) {
+      return NextResponse.json({ message: "Invalid input" }, { status: 400 });
     }
 
     const WEB3FORMS_ACCESS_KEY = process.env.WEB3FORMS_ACCESS_KEY;
@@ -30,6 +46,8 @@ export async function POST(req: Request) {
         subject: `New Portfolio Message from ${name}`
       }),
     });
+
+    recordFailure(ip); // ponytail: reuses the login attempt tracker (10/5min per IP)
 
     const result = await res.json();
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { isAuthorized } from "@/app/api/_auth";
+import { isAuthorized, clientIp, isRateLimited, recordFailure } from "@/app/api/_auth";
 import { getComments, addComment, deleteComment } from "@/lib/data-store";
 
 // GET /api/comments — public
@@ -8,8 +8,12 @@ export async function GET() {
   return NextResponse.json({ comments: await getComments() });
 }
 
-// POST /api/comments — public (visitors can comment)
+// POST /api/comments — public (visitors can comment), rate limited per IP
 export async function POST(req: Request) {
+  const ip = clientIp(req);
+  if (isRateLimited(ip))
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const body = await req.json().catch(() => null);
 
   const name =
@@ -29,6 +33,7 @@ export async function POST(req: Request) {
   }
 
   await addComment(newComment);
+  recordFailure(ip); // ponytail: reuses the login attempt tracker (10/5min per IP)
   revalidatePath("/", "layout");
   return NextResponse.json(newComment, { status: 201 });
 }
