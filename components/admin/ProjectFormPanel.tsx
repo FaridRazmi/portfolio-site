@@ -171,7 +171,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
     borderRadius: 8,
     padding: "0.6rem 0.85rem",
     color: "#e8e8e8",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "var(--font-body)",
     fontSize: "0.85rem",
     outline: "none",
     width: "100%",
@@ -179,7 +179,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
   };
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "var(--font-heading)",
     fontSize: "0.7rem",
     fontWeight: 600,
     letterSpacing: "0.12em",
@@ -241,7 +241,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
           >
             <h2
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "1.2rem",
                 fontWeight: 700,
                 color: "#e8e8e8",
@@ -311,7 +311,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                   border: "none",
                   borderRadius: 8,
                   padding: "0 1rem",
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "var(--font-heading)",
                   fontWeight: 600,
                   cursor: "pointer",
                   flexShrink: 0,
@@ -334,7 +334,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                     padding: "2px 10px 2px 6px",
                     fontSize: "0.72rem",
                     color: "#c8f135",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "var(--font-body)",
                   }}
                 >
                   {tag}
@@ -423,7 +423,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
               ) : (
                 <span
                   style={{
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "var(--font-body)",
                     fontSize: "0.8rem",
                     color: "#444",
                   }}
@@ -553,7 +553,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                 color: "#555",
                 borderRadius: 8,
                 padding: "0.75rem",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 cursor: "pointer",
               }}
             >
@@ -569,7 +569,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                 border: "none",
                 borderRadius: 8,
                 padding: "0.75rem",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontWeight: 700,
                 cursor: form.title ? "pointer" : "default",
                 transition: "all 0.2s",
@@ -593,7 +593,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
         >
           <h3
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "0.7rem",
               fontWeight: 600,
               letterSpacing: "0.15em",
@@ -612,7 +612,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
               borderRadius: 8,
               padding: "0.75rem 1rem",
               fontSize: "0.72rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               color: "#444",
               lineHeight: 1.7,
             }}

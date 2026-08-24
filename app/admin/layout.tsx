@@ -16,7 +16,7 @@ export default function AdminLayout({
         minHeight: "100vh",
         background: "#0c0c0c",
         color: "#e8e8e8",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-body)",
         display: "flex",
       }}
     >

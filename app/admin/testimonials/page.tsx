@@ -14,7 +14,7 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
         transform: "translateX(-50%)",
         background: type === "success" ? "#c8f135" : "#f74a4a",
         color: type === "success" ? "#000" : "#fff",
-        fontFamily: "'Space Grotesk', sans-serif",
+        fontFamily: "var(--font-heading)",
         fontWeight: 600,
         fontSize: "0.85rem",
         padding: "0.6rem 1.5rem",
@@ -35,7 +35,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: "0.5rem 0.75rem",
   color: "#e8e8e8",
-  fontFamily: "'Inter', sans-serif",
+  fontFamily: "var(--font-body)",
   fontSize: "0.85rem",
   outline: "none",
   width: "100%",
@@ -43,7 +43,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: "'Space Grotesk', sans-serif",
+  fontFamily: "var(--font-heading)",
   fontSize: "0.65rem",
   fontWeight: 600,
   letterSpacing: "0.08em",
@@ -114,7 +114,7 @@ export default function AdminTestimonialsPage() {
       >
         <h2
           style={{
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
             fontSize: "1.4rem",
             fontWeight: 700,
             color: "#e8e8e8",
@@ -131,7 +131,7 @@ export default function AdminTestimonialsPage() {
             border: "none",
             borderRadius: 8,
             padding: "0.55rem 1.25rem",
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
             fontWeight: 700,
             fontSize: "0.85rem",
             cursor: "pointer",
@@ -158,7 +158,7 @@ export default function AdminTestimonialsPage() {
           <div style={{ flex: 1 }}>
             <p
               style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: "0.85rem",
                 color: "#ccc",
                 marginBottom: "0.4rem",
@@ -169,7 +169,7 @@ export default function AdminTestimonialsPage() {
             </p>
             <span
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "0.82rem",
                 fontWeight: 600,
                 color: "#e8e8e8",
@@ -179,7 +179,7 @@ export default function AdminTestimonialsPage() {
             </span>
             <span
               style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: "0.72rem",
                 color: "#555",
                 marginLeft: "0.75rem",
@@ -199,7 +199,7 @@ export default function AdminTestimonialsPage() {
                 borderRadius: 6,
                 padding: "4px 12px",
                 fontSize: "0.72rem",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
               }}
             >
               Edit
@@ -214,7 +214,7 @@ export default function AdminTestimonialsPage() {
                 borderRadius: 6,
                 padding: "4px 12px",
                 fontSize: "0.72rem",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
               }}
             >
               Del
@@ -309,7 +309,7 @@ function TestimonialFormPanel({
         >
           <h3
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "1.1rem",
               fontWeight: 700,
               color: "#e8e8e8",
@@ -370,7 +370,7 @@ function TestimonialFormPanel({
               color: "#555",
               borderRadius: 8,
               padding: "0.75rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               cursor: "pointer",
             }}
           >
@@ -386,7 +386,7 @@ function TestimonialFormPanel({
               border: "none",
               borderRadius: 8,
               padding: "0.75rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontWeight: 700,
               cursor: form.quote && form.name ? "pointer" : "default",
             }}

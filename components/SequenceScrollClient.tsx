@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -85,7 +85,7 @@ function Scene({
 
       <group ref={meshRef} position={[0, -2, -10]}>
         <mesh>
-          <torusKnotGeometry args={[8, 2, 256, 32]} />
+          <torusKnotGeometry args={[8, 2, 128, 16]} />
           <meshStandardMaterial
             color="#111111"
             wireframe
@@ -109,6 +109,19 @@ function Scene({
 
 export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // ponytail: pause the WebGL loop when hero scrolls offscreen
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const overlayRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(overlays.length).fill(null),
@@ -229,6 +242,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
           <Canvas
             camera={{ position: [0, 0, 15], fov: 45 }}
             gl={{ antialias: true }}
+            frameloop={inView ? "always" : "never"}
           >
             <Scene scrollProgress={progressRef} />
           </Canvas>
@@ -378,7 +392,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                     />
                     <span
                       style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontFamily: "var(--font-heading)",
                         fontSize: "0.62rem",
                         fontWeight: 600,
                         letterSpacing: "0.22em",
@@ -394,7 +408,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                   {i === 0 ? (
                     <h1
                       style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontFamily: "var(--font-heading)",
                         fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
                         fontWeight: 800,
                         letterSpacing: "-0.04em",
@@ -414,7 +428,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                   ) : (
                     <h2
                       style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontFamily: "var(--font-heading)",
                         fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
                         fontWeight: 800,
                         letterSpacing: "-0.04em",
@@ -446,7 +460,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                   {/* Subtitle */}
                   <p
                     style={{
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "var(--font-body)",
                       fontSize: "clamp(0.95rem, 1.7vw, 1.15rem)",
                       marginTop: "1rem",
                       lineHeight: 1.7,
@@ -507,7 +521,7 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
         >
           <span
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "0.65rem",
               letterSpacing: "0.2em",
               color: "rgba(232,232,232,0.4)",

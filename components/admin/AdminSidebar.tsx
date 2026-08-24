@@ -137,7 +137,7 @@ export default function AdminSidebar() {
           <a
             href="/"
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "0.95rem",
               fontWeight: 700,
               color: "#e8e8e8",
@@ -180,7 +180,7 @@ export default function AdminSidebar() {
                   padding: "0.55rem 1.25rem",
                   margin: "0 0.5rem",
                   borderRadius: 8,
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "var(--font-heading)",
                   fontSize: "0.82rem",
                   fontWeight: isActive ? 600 : 400,
                   color: isActive ? "#c8f135" : "#555",

@@ -1,6 +1,20 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk, Inter } from "next/font/google";
 import { getSiteConfig } from "@/lib/data-store";
 import "./globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-grotesk",
+  display: "swap",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const defaultTitle = "ReidTech | Software Engineer & Creative Technologist";
 const defaultDesc =
@@ -66,7 +80,6 @@ export async function generateViewport(): Promise<Viewport> {
     themeColor: config?.seo?.themeColor ?? "#0c0c0c",
     width: "device-width",
     initialScale: 1,
-    maximumScale: 1,
   };
 }
 
@@ -104,18 +117,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="noise">
+    <html
+      lang="en"
+      className={`noise ${spaceGrotesk.variable} ${inter.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -56,7 +56,7 @@ export default function AdminPinGate({ onAuth }: Props) {
           alignItems: "center",
           justifyContent: "center",
           color: "#555",
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontSize: "0.85rem",
           letterSpacing: "0.08em",
         }}
@@ -105,7 +105,7 @@ export default function AdminPinGate({ onAuth }: Props) {
         <div>
           <h1
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "1.4rem",
               fontWeight: 700,
               color: "#e8e8e8",
@@ -117,7 +117,7 @@ export default function AdminPinGate({ onAuth }: Props) {
           </h1>
           <p
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: "0.82rem",
               color: "#555",
             }}
@@ -144,7 +144,7 @@ export default function AdminPinGate({ onAuth }: Props) {
               borderRadius: 8,
               padding: "0.75rem 1rem",
               color: "#e8e8e8",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "1rem",
               outline: "none",
               letterSpacing: "0.3em",
@@ -155,7 +155,7 @@ export default function AdminPinGate({ onAuth }: Props) {
               style={{
                 fontSize: "0.75rem",
                 color: "#f74a4a",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-body)",
               }}
             >
               Incorrect PIN. Try again.
@@ -171,7 +171,7 @@ export default function AdminPinGate({ onAuth }: Props) {
             border: "none",
             borderRadius: 8,
             padding: "0.8rem",
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
             fontWeight: 600,
             fontSize: "0.9rem",
             cursor: pin ? "pointer" : "default",

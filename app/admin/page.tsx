@@ -53,7 +53,7 @@ export default function AdminDashboard() {
     <div style={{ padding: "3rem 2rem" }}>
       <h1
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontSize: "1.8rem",
           fontWeight: 700,
           color: "#e8e8e8",
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       </h1>
       <p
         style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-body)",
           fontSize: "0.85rem",
           color: "#444",
           marginBottom: "2.5rem",
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           >
             <h3
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "1rem",
                 fontWeight: 600,
                 color: "#e8e8e8",
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
             </h3>
             <p
               style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: "0.8rem",
                 color: "#555",
                 lineHeight: 1.6,

@@ -14,7 +14,7 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
         transform: "translateX(-50%)",
         background: type === "success" ? "#c8f135" : "#f74a4a",
         color: type === "success" ? "#000" : "#fff",
-        fontFamily: "'Space Grotesk', sans-serif",
+        fontFamily: "var(--font-heading)",
         fontWeight: 600,
         fontSize: "0.85rem",
         padding: "0.6rem 1.5rem",
@@ -35,7 +35,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: "0.6rem 0.85rem",
   color: "#e8e8e8",
-  fontFamily: "'Inter', sans-serif",
+  fontFamily: "var(--font-body)",
   fontSize: "0.85rem",
   outline: "none",
   width: "100%",
@@ -43,7 +43,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: "'Space Grotesk', sans-serif",
+  fontFamily: "var(--font-heading)",
   fontSize: "0.7rem",
   fontWeight: 600,
   letterSpacing: "0.12em",
@@ -130,7 +130,7 @@ export default function AdminAboutPage() {
     <div style={{ padding: "2.5rem 2rem", maxWidth: 800 }}>
       <h2
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontSize: "1.4rem",
           fontWeight: 700,
           color: "#e8e8e8",
@@ -218,7 +218,7 @@ export default function AdminAboutPage() {
             padding: "6px 14px",
             cursor: "pointer",
             fontSize: "0.78rem",
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
           }}
         >
           + Add Detail
@@ -246,7 +246,7 @@ export default function AdminAboutPage() {
               border: "none",
               borderRadius: 8,
               padding: "0 1rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -268,7 +268,7 @@ export default function AdminAboutPage() {
                 padding: "2px 10px 2px 6px",
                 fontSize: "0.72rem",
                 color: "#c8f135",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-body)",
               }}
             >
               {t}
@@ -299,7 +299,7 @@ export default function AdminAboutPage() {
           border: "none",
           borderRadius: 8,
           padding: "0.75rem 2rem",
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontWeight: 700,
           fontSize: "0.9rem",
           cursor: "pointer",

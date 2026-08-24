@@ -32,9 +32,15 @@ export default function HomeClient({
   navbarSlot,
   auroraDividerSlot,
 }: Props) {
-  const [showPreloader, setShowPreloader] = useState(true);
+  // ponytail: fake progress bar only on first visit per tab, add permanent removal if nobody loves it
+  const [showPreloader, setShowPreloader] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      !sessionStorage.getItem("preloader-seen"),
+  );
 
   const handlePreloaderComplete = useCallback(() => {
+    sessionStorage.setItem("preloader-seen", "1");
     setShowPreloader(false);
   }, []);
 

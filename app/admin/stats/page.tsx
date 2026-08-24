@@ -14,7 +14,7 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
         transform: "translateX(-50%)",
         background: type === "success" ? "#c8f135" : "#f74a4a",
         color: type === "success" ? "#000" : "#fff",
-        fontFamily: "'Space Grotesk', sans-serif",
+        fontFamily: "var(--font-heading)",
         fontWeight: 600,
         fontSize: "0.85rem",
         padding: "0.6rem 1.5rem",
@@ -87,7 +87,7 @@ export default function AdminStatsPage() {
     borderRadius: 8,
     padding: "0.5rem 0.75rem",
     color: "#e8e8e8",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "var(--font-body)",
     fontSize: "0.85rem",
     outline: "none",
     width: "100%",
@@ -98,7 +98,7 @@ export default function AdminStatsPage() {
     <div style={{ padding: "2.5rem 2rem", maxWidth: 800 }}>
       <h2
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontSize: "1.4rem",
           fontWeight: 700,
           color: "#e8e8e8",
@@ -127,7 +127,7 @@ export default function AdminStatsPage() {
           <div>
             <label
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "0.65rem",
                 color: "#555",
                 display: "block",
@@ -150,7 +150,7 @@ export default function AdminStatsPage() {
           <div>
             <label
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "0.65rem",
                 color: "#555",
                 display: "block",
@@ -171,7 +171,7 @@ export default function AdminStatsPage() {
           <div>
             <label
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "0.65rem",
                 color: "#555",
                 display: "block",
@@ -191,7 +191,7 @@ export default function AdminStatsPage() {
           <div>
             <label
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "var(--font-heading)",
                 fontSize: "0.65rem",
                 color: "#555",
                 display: "block",
@@ -220,7 +220,7 @@ export default function AdminStatsPage() {
           border: "none",
           borderRadius: 8,
           padding: "0.75rem 2rem",
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontWeight: 700,
           fontSize: "0.9rem",
           cursor: "pointer",

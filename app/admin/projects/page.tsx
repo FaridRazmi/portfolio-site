@@ -15,7 +15,7 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
         transform: "translateX(-50%)",
         background: type === "success" ? "#c8f135" : "#f74a4a",
         color: type === "success" ? "#000" : "#fff",
-        fontFamily: "'Space Grotesk', sans-serif",
+        fontFamily: "var(--font-heading)",
         fontWeight: 600,
         fontSize: "0.85rem",
         padding: "0.6rem 1.5rem",
@@ -122,7 +122,7 @@ export default function AdminProjectsPage() {
         minHeight: "100vh",
         background: "#0c0c0c",
         color: "#e8e8e8",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-body)",
       }}
     >
       {/* Header */}
@@ -147,7 +147,7 @@ export default function AdminProjectsPage() {
               color: "#444",
               textDecoration: "none",
               fontSize: "0.8rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               display: "flex",
               alignItems: "center",
               gap: 6,
@@ -158,7 +158,7 @@ export default function AdminProjectsPage() {
           <span style={{ color: "#222" }}>|</span>
           <span
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontSize: "1rem",
               fontWeight: 700,
               letterSpacing: "-0.02em",
@@ -173,7 +173,7 @@ export default function AdminProjectsPage() {
               border: "1px solid rgba(200,241,53,0.25)",
               color: "#c8f135",
               fontSize: "0.65rem",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "var(--font-heading)",
               fontWeight: 600,
               letterSpacing: "0.12em",
               padding: "2px 8px",
@@ -191,7 +191,7 @@ export default function AdminProjectsPage() {
             border: "none",
             borderRadius: 8,
             padding: "0.55rem 1.25rem",
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
             fontWeight: 700,
             fontSize: "0.85rem",
             cursor: "pointer",
@@ -211,7 +211,7 @@ export default function AdminProjectsPage() {
             fontSize: "0.78rem",
             color: "#333",
             marginBottom: "1.5rem",
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--font-heading)",
           }}
         >
           Drag rows to reorder. Changes save automatically.
@@ -243,7 +243,7 @@ export default function AdminProjectsPage() {
                 <span
                   key={i}
                   style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontFamily: "var(--font-heading)",
                     fontSize: "0.65rem",
                     fontWeight: 600,
                     letterSpacing: "0.12em",
@@ -328,7 +328,7 @@ export default function AdminProjectsPage() {
                   )}
                   <span
                     style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "var(--font-heading)",
                       fontSize: "0.82rem",
                       fontWeight: 600,
                       color: "#e8e8e8",
@@ -402,7 +402,7 @@ export default function AdminProjectsPage() {
                       borderRadius: 6,
                       padding: "4px 10px",
                       fontSize: "0.72rem",
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "var(--font-heading)",
                       transition: "all 0.15s",
                     }}
                     onMouseEnter={(e) => {
@@ -426,7 +426,7 @@ export default function AdminProjectsPage() {
                       borderRadius: 6,
                       padding: "4px 10px",
                       fontSize: "0.72rem",
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "var(--font-heading)",
                       transition: "all 0.15s",
                     }}
                     onMouseEnter={(e) => {
@@ -450,7 +450,7 @@ export default function AdminProjectsPage() {
                   padding: "4rem",
                   textAlign: "center",
                   color: "#333",
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "var(--font-heading)",
                 }}
               >
                 No projects yet.{" "}

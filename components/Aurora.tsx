@@ -190,6 +190,13 @@ export default function Aurora(props: AuroraProps) {
     ctn.appendChild(gl.canvas);
 
     let animateId = 0;
+    let cachedStops = "";
+    // ponytail: parse hex only when it actually changes, not every frame
+    const toRGB = (stops: string[]) =>
+      stops.map((hex: string) => {
+        const c = new Color(hex);
+        return [c.r, c.g, c.b];
+      });
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
       if (!inViewRef.current) return;
@@ -199,10 +206,11 @@ export default function Aurora(props: AuroraProps) {
         program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
         program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
         const stops = propsRef.current.colorStops ?? colorStops;
-        program.uniforms.uColorStops.value = stops.map((hex: string) => {
-          const c = new Color(hex);
-          return [c.r, c.g, c.b];
-        });
+        const key = stops.join(",");
+        if (key !== cachedStops) {
+          cachedStops = key;
+          program.uniforms.uColorStops.value = toRGB(stops);
+        }
         renderer.render({ scene: mesh });
       }
     };
