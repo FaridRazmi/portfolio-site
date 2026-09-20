@@ -156,6 +156,9 @@ const TABLE = "content";
 
 async function readSection<T>(key: string, fallback: T): Promise<T> {
   if (!isSupabaseConfigured()) {
+    // Prefer in-process edits (memoryFallback) over the bundled JSON defaults
+    // so admin changes are visible for the lifetime of the server process.
+    if (key in memoryFallback) return deepClone(memoryFallback[key] as T);
     return deepClone(getJsonDefaults()[key] as T ?? fallback);
   }
   try {

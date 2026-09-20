@@ -76,7 +76,8 @@ export function validateProject(
     out.image = r.image.slice(0, 2_000_000);
   }
 
-  if (r.id !== undefined && isStr(r.id)) out.id = r.id.slice(0, 100);
+  // `id` is intentionally not copied: it is server-assigned and must never be
+  // spoofed or renamed via a create/patch payload.
 
   return out as Partial<Project> & Pick<Project, "title" | "description">;
 }

@@ -32,8 +32,20 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object")
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+
+  const quote = typeof body.quote === "string" ? body.quote.trim() : "";
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const role = typeof body.role === "string" ? body.role.trim() : "";
+  if (!quote || !name)
+    return NextResponse.json(
+      { error: "Quote and name are required" },
+      { status: 400 },
+    );
+
   const newTestimonial = {
-    ...body,
+    quote,
+    name,
+    role,
     id: typeof body.id === "string" ? body.id : `t${Date.now()}`,
   };
   await addTestimonial(newTestimonial);

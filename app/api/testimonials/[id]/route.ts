@@ -5,6 +5,7 @@ import {
   getTestimonials,
   updateTestimonial,
   deleteTestimonial,
+  type Testimonial,
 } from "@/lib/data-store";
 
 // DELETE /api/testimonials/:id
@@ -34,7 +35,11 @@ export async function PUT(
   const list = await getTestimonials();
   if (!list.find((t) => t.id === id))
     return NextResponse.json({ error: "Not found" }, { status: 404 });
-  await updateTestimonial(id, body);
+  const patch: Partial<Testimonial> = {};
+  if (typeof body.quote === "string") patch.quote = body.quote.trim();
+  if (typeof body.name === "string") patch.name = body.name.trim();
+  if (typeof body.role === "string") patch.role = body.role.trim();
+  await updateTestimonial(id, patch);
   const updated = (await getTestimonials()).find((t) => t.id === id);
   revalidatePath("/", "layout");
   return NextResponse.json(updated);

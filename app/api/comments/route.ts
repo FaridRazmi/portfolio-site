@@ -1,7 +1,33 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { isAuthorized, clientIp, isRateLimited, recordFailure } from "@/app/api/_auth";
+import { isAuthorized, clientIp } from "@/app/api/_auth";
 import { getComments, addComment, deleteComment } from "@/lib/data-store";
+
+// Comment-specific rate limiter, kept separate from the admin-login limiter so
+// visitor commenting can never lock an admin out (or vice versa).
+const commentAttempts = new Map<string, { count: number; firstAt: number }>();
+const COMMENT_MAX = 10;
+const COMMENT_WINDOW_MS = 1000 * 60 * 5;
+
+function commentRateLimited(ip: string): boolean {
+  const entry = commentAttempts.get(ip);
+  if (!entry) return false;
+  if (Date.now() - entry.firstAt > COMMENT_WINDOW_MS) {
+    commentAttempts.delete(ip);
+    return false;
+  }
+  return entry.count >= COMMENT_MAX;
+}
+
+function recordComment(ip: string) {
+  const now = Date.now();
+  const entry = commentAttempts.get(ip);
+  if (!entry || now - entry.firstAt > COMMENT_WINDOW_MS) {
+    commentAttempts.set(ip, { count: 1, firstAt: now });
+  } else {
+    entry.count += 1;
+  }
+}
 
 // GET /api/comments — public
 export async function GET() {
@@ -11,7 +37,7 @@ export async function GET() {
 // POST /api/comments — public (visitors can comment), rate limited per IP
 export async function POST(req: Request) {
   const ip = clientIp(req);
-  if (isRateLimited(ip))
+  if (commentRateLimited(ip))
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const body = await req.json().catch(() => null);
@@ -33,7 +59,7 @@ export async function POST(req: Request) {
   }
 
   await addComment(newComment);
-  recordFailure(ip); // ponytail: reuses the login attempt tracker (10/5min per IP)
+  recordComment(ip);
   revalidatePath("/", "layout");
   return NextResponse.json(newComment, { status: 201 });
 }

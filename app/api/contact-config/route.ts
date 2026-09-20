@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAuthorized } from "@/app/api/_auth";
 import { getContact, setContact } from "@/lib/data-store";
 
@@ -15,5 +16,6 @@ export async function PUT(req: Request) {
   if (!body || typeof body !== "object")
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   await setContact(body);
+  revalidatePath("/", "layout");
   return NextResponse.json(body);
 }

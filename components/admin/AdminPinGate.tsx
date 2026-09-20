@@ -8,6 +8,7 @@ interface Props {
 export default function AdminPinGate({ onAuth }: Props) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("Incorrect PIN. Try again.");
   const [shake, setShake] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -40,6 +41,11 @@ export default function AdminPinGate({ onAuth }: Props) {
       onAuth();
     } else {
       setError(true);
+      setErrorMsg(
+        res.status === 429
+          ? "Too many attempts. Try again in a few minutes."
+          : "Incorrect PIN. Try again.",
+      );
       setShake(true);
       setTimeout(() => setShake(false), 500);
       setPin("");
@@ -158,7 +164,7 @@ export default function AdminPinGate({ onAuth }: Props) {
                 fontFamily: "var(--font-body)",
               }}
             >
-              Incorrect PIN. Try again.
+              {errorMsg}
             </span>
           )}
         </div>
