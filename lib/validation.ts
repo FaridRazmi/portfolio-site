@@ -67,8 +67,9 @@ export function validateProject(
 
   if (r.link !== undefined) {
     if (!isStr(r.link)) return null;
-    if (r.link && !/^(https?:\/\/|\/)/.test(r.link)) return null;
-    out.link = r.link.slice(0, 2000);
+    let link = r.link.trim();
+    if (link && !/^(\/|https?:\/\/)/.test(link)) link = "https://" + link;
+    out.link = link.slice(0, 2000);
   }
 
   if (r.image !== undefined) {
