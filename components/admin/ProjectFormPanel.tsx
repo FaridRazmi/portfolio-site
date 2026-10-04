@@ -2,6 +2,13 @@
 import { useState } from "react";
 import { Project } from "./types";
 import ProjectCardPreview from "./ProjectCardPreview";
+import {
+  overlaps,
+  clampRect,
+  findFreeSlot,
+  GRID_COLS,
+  type GridRect,
+} from "@/lib/grid";
 
 interface Props {
   project?: Project;
@@ -27,32 +34,6 @@ const ACCENT_PRESETS = [
   "#c8f135", "#4af7c2", "#7c6af7", "#f74a4a", "#f7a24a", "#4ac4f7", "#f7c84a",
 ];
 
-type GridRect = { col: number; row: number; colSpan: number; rowSpan: number };
-
-function overlaps(a: GridRect, b: GridRect): boolean {
-  return (
-    a.col < b.col + b.colSpan &&
-    a.col + a.colSpan > b.col &&
-    a.row < b.row + b.rowSpan &&
-    a.row + a.rowSpan > b.row
-  );
-}
-
-function findFreeSlot(
-  others: GridRect[],
-  colSpan: number,
-  rowSpan: number,
-): { col: number; row: number } {
-  const maxRow = Math.max(3, ...others.map((p) => p.row + p.rowSpan));
-  for (let r = 1; r <= maxRow; r++) {
-    for (let c = 1; c <= 12 - colSpan + 1; c++) {
-      const candidate = { col: c, row: r, colSpan, rowSpan };
-      if (!others.some((p) => overlaps(candidate, p))) return { col: c, row: r };
-    }
-  }
-  return { col: 1, row: maxRow + 1 };
-}
-
 function GridEditorCell({
   col, row, colSpan, rowSpan, accent,
   onDragStart, activeDragging,
@@ -64,7 +45,7 @@ function GridEditorCell({
   ghosts: { rect: GridRect; accent: string; title: string }[];
   hasOverlap: boolean;
 }) {
-  const COLS = 12;
+  const COLS = GRID_COLS;
   const ghostMaxRow = ghosts.reduce((m, g) => Math.max(m, g.rect.row + g.rect.rowSpan - 1), 0);
   const ROWS = Math.max(3, row + rowSpan - 1, ghostMaxRow + 1);
   const dragMaxRow = activeDragging ? activeDragging.row + rowSpan - 1 : 0;
@@ -166,6 +147,7 @@ export default function ProjectFormPanel({ project, projects, onSave, onClose }:
   const [tagInput, setTagInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{ col: number; row: number } | null>(null);
 
   const ghosts = others.map((p) => ({
@@ -174,22 +156,7 @@ export default function ProjectFormPanel({ project, projects, onSave, onClose }:
     title: p.title,
   }));
 
-  const clamped = {
-    ...form,
-    col: Math.max(1, Math.min(12 - form.colSpan + 1, form.col)),
-    row: Math.max(1, form.row),
-    colSpan: Math.max(1, Math.min(12, form.colSpan)),
-    rowSpan: Math.max(1, Math.min(5, form.rowSpan)),
-  };
-  if (
-    clamped.col !== form.col ||
-    clamped.row !== form.row ||
-    clamped.colSpan !== form.colSpan ||
-    clamped.rowSpan !== form.rowSpan
-  ) {
-    // normalize out-of-range numeric input on the next tick
-    setForm(clamped);
-  }
+  const clamped: typeof form = { ...form, ...clampRect(form) };
 
   const hasOverlap = ghosts.some((g) =>
     overlaps(
@@ -263,8 +230,12 @@ export default function ProjectFormPanel({ project, projects, onSave, onClose }:
       }),
     });
     const saved = await res.json();
-    onSave(saved);
     setSaving(false);
+    if (!res.ok) {
+      setSaveError(saved.error ?? "Failed to save");
+      return;
+    }
+    onSave(saved);
   };
 
   const inputStyle: React.CSSProperties = {
@@ -630,30 +601,6 @@ export default function ProjectFormPanel({ project, projects, onSave, onClose }:
                 ghosts={ghosts}
                 hasOverlap={hasOverlap}
               />
-              {/* Ghost labels */}
-              <div style={{ position: "relative", height: 0 }}>
-                {ghosts.map((g, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      position: "absolute",
-                      left: `calc(${((g.rect.col - 1) / 12) * 100}% + 4px)`,
-                      top: `calc(${((g.rect.row - 1) * 27) - 27}px)`,
-                      width: `calc(${(g.rect.colSpan / 12) * 100}% - 8px)`,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      fontSize: "0.55rem",
-                      fontFamily: "var(--font-heading)",
-                      color: `${g.accent}88`,
-                      textAlign: "center",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {g.title}
-                  </span>
-                ))}
-              </div>
               <p
                 style={{
                   fontSize: "0.65rem",
@@ -705,6 +652,19 @@ export default function ProjectFormPanel({ project, projects, onSave, onClose }:
 
           {/* Actions */}
           <div style={{ display: "flex", gap: 10, marginTop: "0.5rem" }}>
+            {saveError && (
+              <div
+                style={{
+                  width: "100%",
+                  fontSize: "0.72rem",
+                  color: "#f74a4a",
+                  fontFamily: "var(--font-heading)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                {saveError}
+              </div>
+            )}
             <button
               onClick={onClose}
               style={{

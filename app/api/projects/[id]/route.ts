@@ -6,6 +6,7 @@ import {
 } from "@/lib/data-store";
 import { isAuthorized } from "@/app/api/_auth";
 import { validateProject } from "@/lib/validation";
+import { clampRect, overlaps } from "@/lib/grid";
 
 // PUT /api/projects/[id]
 export async function PUT(
@@ -22,10 +23,31 @@ export async function PUT(
     return NextResponse.json({ error: "Invalid project data" }, { status: 400 });
 
   const projects = await getProjects();
-  if (!projects.find((p) => p.id === id))
+  const current = projects.find((p) => p.id === id);
+  if (!current)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  await updateProject(id, patch);
+  const rect = clampRect({
+    col: patch.col ?? current.col,
+    row: patch.row ?? current.row,
+    colSpan: patch.colSpan ?? current.colSpan,
+    rowSpan: patch.rowSpan ?? current.rowSpan,
+  });
+  const clash = projects.find(
+    (p) =>
+      p.id !== id &&
+      overlaps(
+        rect,
+        { col: p.col, row: p.row, colSpan: p.colSpan, rowSpan: p.rowSpan },
+      ),
+  );
+  if (clash)
+    return NextResponse.json(
+      { error: `Position overlaps "${clash.title}"` },
+      { status: 409 },
+    );
+
+  await updateProject(id, { ...patch, ...rect });
   const updated = (await getProjects()).find((p) => p.id === id);
   return NextResponse.json(updated);
 }

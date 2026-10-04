@@ -7,6 +7,7 @@ import {
 } from "@/lib/data-store";
 import { isAuthorized } from "@/app/api/_auth";
 import { validateProject } from "@/lib/validation";
+import { clampRect, findFreeSlot, overlaps } from "@/lib/grid";
 
 // GET /api/projects
 export async function GET() {
@@ -24,18 +25,37 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid project data" }, { status: 400 });
 
   const existing = await getProjects();
+  const rect = clampRect(project);
+  const clashes = existing.some((p) =>
+    overlaps(rect, { col: p.col, row: p.row, colSpan: p.colSpan, rowSpan: p.rowSpan }),
+  );
+  // Stale clients may submit an occupied position; auto-place instead of
+  // silently stacking cards on the homepage.
+  const position = clashes
+    ? findFreeSlot(
+        existing.map((p) => ({
+          col: p.col,
+          row: p.row,
+          colSpan: p.colSpan,
+          rowSpan: p.rowSpan,
+        })),
+        rect.colSpan,
+        rect.rowSpan,
+      )
+    : { col: rect.col, row: rect.row };
+
   const newProject: Project = {
+    ...project,
     id: `p-${Date.now()}`,
     order: existing.length,
-    tags: [],
-    col: 1,
-    row: 1,
-    colSpan: 4,
-    rowSpan: 1,
-    accent: "#c8f135",
-    link: "",
-    image: "",
-    ...project,
+    tags: project.tags ?? [],
+    accent: project.accent ?? "#c8f135",
+    link: project.link ?? "",
+    image: project.image ?? "",
+    col: position.col,
+    row: position.row,
+    colSpan: rect.colSpan,
+    rowSpan: rect.rowSpan,
   };
 
   await addProject(newProject);
