@@ -133,7 +133,6 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
   const rafPending = useRef(false);
   const lastProgress = useRef(-1);
   const progressRef = useRef(0);
-  const inViewRef = useRef(true);
 
   const updateOverlays = (p: number) => {
     progressRef.current = p;
@@ -319,9 +318,11 @@ export default function SequenceScrollClient({ overlays, onLoaded }: Props) {
                   overlayRefs.current[i] = el;
                 }}
                 style={{
-                  opacity: 0,
+                  opacity: i === 0 ? 1 : 0,
                   transform:
-                    "translateY(28px) perspective(800px) rotateX(2deg)",
+                    i === 0
+                      ? "translateY(0px)"
+                      : "translateY(28px) perspective(800px) rotateX(2deg)",
                   textAlign: item.align,
                   maxWidth: 680,
                   willChange: "opacity, transform",

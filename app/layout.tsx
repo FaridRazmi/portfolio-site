@@ -126,6 +126,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if('scrollRestoration' in history)history.scrollRestoration='manual';window.addEventListener('pageshow',function(){if(!location.hash)window.scrollTo(0,0)});}catch(e){}",
+          }}
+        />
       </head>
       <body className="antialiased">{children}</body>
     </html>

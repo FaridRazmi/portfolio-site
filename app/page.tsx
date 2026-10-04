@@ -9,10 +9,14 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import AuroraDivider from "@/components/AuroraDivider";
 import HomeClient from "@/components/HomeClient";
+import { getHeroOverlays } from "@/lib/data-store";
 
-export default function Home() {
+export default async function Home() {
+  const heroOverlays = await getHeroOverlays();
+
   return (
     <HomeClient
+      heroOverlays={heroOverlays}
       projectsSlot={<ProjectsSection />}
       aboutSlot={<AboutSection />}
       statsSlot={<StatsSection />}
