@@ -478,6 +478,7 @@ export default function AdminProjectsPage() {
       {panel !== null && (
         <ProjectFormPanel
           project={panel === "new" ? undefined : (panel as Project)}
+          projects={projects}
           onSave={handleSave}
           onClose={() => setPanel(null)}
         />

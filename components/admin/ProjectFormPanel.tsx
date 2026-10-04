@@ -1,10 +1,11 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Project } from "./types";
 import ProjectCardPreview from "./ProjectCardPreview";
 
 interface Props {
   project?: Project;
+  projects: Project[];
   onSave: (p: Project) => void;
   onClose: () => void;
 }
@@ -26,19 +27,51 @@ const ACCENT_PRESETS = [
   "#c8f135", "#4af7c2", "#7c6af7", "#f74a4a", "#f7a24a", "#4ac4f7", "#f7c84a",
 ];
 
+type GridRect = { col: number; row: number; colSpan: number; rowSpan: number };
+
+function overlaps(a: GridRect, b: GridRect): boolean {
+  return (
+    a.col < b.col + b.colSpan &&
+    a.col + a.colSpan > b.col &&
+    a.row < b.row + b.rowSpan &&
+    a.row + a.rowSpan > b.row
+  );
+}
+
+function findFreeSlot(
+  others: GridRect[],
+  colSpan: number,
+  rowSpan: number,
+): { col: number; row: number } {
+  const maxRow = Math.max(3, ...others.map((p) => p.row + p.rowSpan));
+  for (let r = 1; r <= maxRow; r++) {
+    for (let c = 1; c <= 12 - colSpan + 1; c++) {
+      const candidate = { col: c, row: r, colSpan, rowSpan };
+      if (!others.some((p) => overlaps(candidate, p))) return { col: c, row: r };
+    }
+  }
+  return { col: 1, row: maxRow + 1 };
+}
+
 function GridEditorCell({
   col, row, colSpan, rowSpan, accent,
   onDragStart, activeDragging,
+  ghosts, hasOverlap,
 }: {
   col: number; row: number; colSpan: number; rowSpan: number; accent: string;
   onDragStart: (position: { col: number; row: number }) => void;
   activeDragging: { col: number; row: number } | null;
+  ghosts: { rect: GridRect; accent: string; title: string }[];
+  hasOverlap: boolean;
 }) {
   const COLS = 12;
-  const ROWS = 3;
+  const ghostMaxRow = ghosts.reduce((m, g) => Math.max(m, g.rect.row + g.rect.rowSpan - 1), 0);
+  const ROWS = Math.max(3, row + rowSpan - 1, ghostMaxRow + 1);
+  const dragMaxRow = activeDragging ? activeDragging.row + rowSpan - 1 : 0;
+  const totalRows = Math.max(ROWS, dragMaxRow);
   const cells: React.ReactNode[] = [];
 
-  for (let r = 1; r <= ROWS; r++) {
+  for (let r = 1; r <= totalRows; r++) {
     for (let c = 1; c <= COLS; c++) {
       const inCard =
         c >= col && c < col + colSpan && r >= row && r < row + rowSpan;
@@ -49,6 +82,26 @@ function GridEditorCell({
         c < activeDragging.col + colSpan &&
         r >= activeDragging.row &&
         r < activeDragging.row + rowSpan;
+      const inGhost = ghosts.some(
+        (g) =>
+          c >= g.rect.col &&
+          c < g.rect.col + g.rect.colSpan &&
+          r >= g.rect.row &&
+          r < g.rect.row + g.rect.rowSpan,
+      );
+      const hoverClashes =
+        isHover &&
+        ghosts.some((g) =>
+          overlaps(
+            {
+              col: activeDragging!.col,
+              row: activeDragging!.row,
+              colSpan,
+              rowSpan,
+            },
+            g.rect,
+          ),
+        );
 
       cells.push(
         <div
@@ -58,9 +111,15 @@ function GridEditorCell({
           style={{
             border: `1px solid ${inCard || isHover ? "transparent" : "#1e1e1e"}`,
             borderRadius: 3,
-            background: inCard ? `${accent}33` : isHover ? `${accent}22` : "#111",
+            background: inCard
+              ? `${hasOverlap ? "#f74a4a" : accent}33`
+              : isHover
+                ? `${hoverClashes ? "#f74a4a" : accent}22`
+                : inGhost
+                  ? "#1a1a1a"
+                  : "#111",
             cursor: isOrigin ? "grab" : "default",
-            outline: isOrigin ? `2px solid ${accent}` : undefined,
+            outline: isOrigin ? `2px solid ${hasOverlap ? "#f74a4a" : accent}` : undefined,
             transition: "background 0.15s",
           }}
         />,
@@ -73,7 +132,7 @@ function GridEditorCell({
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-        gridTemplateRows: `repeat(${ROWS}, 24px)`,
+        gridTemplateRows: `repeat(${totalRows}, 24px)`,
         gap: 3,
       }}
     >
@@ -82,8 +141,9 @@ function GridEditorCell({
   );
 }
 
-export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
+export default function ProjectFormPanel({ project, projects, onSave, onClose }: Props) {
   const isEdit = !!project;
+  const others = projects.filter((p) => p.id !== project?.id);
   const [form, setForm] = useState<Omit<Project, "id" | "order">>(
     project
       ? {
@@ -98,13 +158,50 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
           link: project.link,
           image: project.image,
         }
-      : EMPTY,
+      : {
+          ...EMPTY,
+          ...findFreeSlot(others, EMPTY.colSpan, EMPTY.rowSpan),
+        },
   );
   const [tagInput, setTagInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [dragPos, setDragPos] = useState<{ col: number; row: number } | null>(null);
   const [dropTarget, setDropTarget] = useState<{ col: number; row: number } | null>(null);
+
+  const ghosts = others.map((p) => ({
+    rect: { col: p.col, row: p.row, colSpan: p.colSpan, rowSpan: p.rowSpan },
+    accent: p.accent,
+    title: p.title,
+  }));
+
+  const clamped = {
+    ...form,
+    col: Math.max(1, Math.min(12 - form.colSpan + 1, form.col)),
+    row: Math.max(1, form.row),
+    colSpan: Math.max(1, Math.min(12, form.colSpan)),
+    rowSpan: Math.max(1, Math.min(5, form.rowSpan)),
+  };
+  if (
+    clamped.col !== form.col ||
+    clamped.row !== form.row ||
+    clamped.colSpan !== form.colSpan ||
+    clamped.rowSpan !== form.rowSpan
+  ) {
+    // normalize out-of-range numeric input on the next tick
+    setForm(clamped);
+  }
+
+  const hasOverlap = ghosts.some((g) =>
+    overlaps(
+      {
+        col: clamped.col,
+        row: clamped.row,
+        colSpan: clamped.colSpan,
+        rowSpan: clamped.rowSpan,
+      },
+      g.rect,
+    ),
+  );
 
   const set = (key: keyof typeof EMPTY, value: unknown) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -131,20 +228,19 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
     setUploading(false);
   };
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      if (!dropTarget) return;
-      setForm((f) => ({
-        ...f,
-        col: Math.max(1, Math.min(12 - f.colSpan + 1, dropTarget.col)),
-        row: Math.max(1, Math.min(3 - f.rowSpan + 1, dropTarget.row)),
-      }));
-      setDragPos(null);
-      setDropTarget(null);
-    },
-    [dropTarget],
-  );
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!dropTarget) return;
+    const next = {
+      col: Math.max(1, Math.min(12 - clamped.colSpan + 1, dropTarget.col)),
+      row: Math.max(1, Math.min(10, dropTarget.row)),
+    };
+    const clashes = ghosts.some((g) =>
+      overlaps({ ...next, colSpan: clamped.colSpan, rowSpan: clamped.rowSpan }, g.rect),
+    );
+    if (!clashes) setForm((f) => ({ ...f, ...next }));
+    setDropTarget(null);
+  };
 
   const save = async () => {
     setSaving(true);
@@ -156,7 +252,13 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ...form,
+        ...clamped,
+        title: form.title,
+        description: form.description,
+        tags: form.tags,
+        accent: form.accent,
+        link: form.link,
+        image: form.image,
         order: project?.order ?? 999,
       }),
     });
@@ -506,21 +608,62 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                 const y = e.clientY - rect.top;
                 const innerW = rect.width - 32;
                 const innerH = rect.height - 32;
+                const maxRow = Math.max(
+                  3,
+                  ...ghosts.map((g) => g.rect.row + g.rect.rowSpan - 1),
+                  clamped.row + clamped.rowSpan - 1,
+                ) + 1;
                 const c = Math.max(1, Math.min(12, Math.ceil((x / innerW) * 12)));
-                const r = Math.max(1, Math.min(3, Math.ceil((y / innerH) * 3)));
+                const r = Math.max(1, Math.min(maxRow, Math.ceil((y / innerH) * maxRow)));
                 setDropTarget({ col: c, row: r });
               }}
               onDrop={handleDrop}
             >
               <GridEditorCell
-                col={form.col}
-                row={form.row}
-                colSpan={form.colSpan}
-                rowSpan={form.rowSpan}
+                col={clamped.col}
+                row={clamped.row}
+                colSpan={clamped.colSpan}
+                rowSpan={clamped.rowSpan}
                 accent={form.accent}
-                onDragStart={(pos) => setDragPos(pos)}
+                onDragStart={(pos) => setDropTarget(pos)}
                 activeDragging={dropTarget}
+                ghosts={ghosts}
+                hasOverlap={hasOverlap}
               />
+              {/* Ghost labels */}
+              <div style={{ position: "relative", height: 0 }}>
+                {ghosts.map((g, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      position: "absolute",
+                      left: `calc(${((g.rect.col - 1) / 12) * 100}% + 4px)`,
+                      top: `calc(${((g.rect.row - 1) * 27) - 27}px)`,
+                      width: `calc(${(g.rect.colSpan / 12) * 100}% - 8px)`,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      fontSize: "0.55rem",
+                      fontFamily: "var(--font-heading)",
+                      color: `${g.accent}88`,
+                      textAlign: "center",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {g.title}
+                  </span>
+                ))}
+              </div>
+              <p
+                style={{
+                  fontSize: "0.65rem",
+                  color: "#444",
+                  marginTop: "0.6rem",
+                  fontFamily: "var(--font-body)",
+                }}
+              >
+                Dim blocks are your other projects. New rows appear automatically.
+              </p>
             </div>
             {/* Numeric fallback */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
@@ -533,13 +676,31 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
                     type="number"
                     min={1}
                     max={k === "col" ? 12 : k === "row" ? 10 : k === "colSpan" ? 12 : 5}
-                    style={{ ...inputStyle, textAlign: "center" }}
-                    value={form[k]}
+                    style={{
+                      ...inputStyle,
+                      textAlign: "center",
+                      ...(hasOverlap && (k === "col" || k === "row")
+                        ? { borderColor: "#f74a4a" }
+                        : {}),
+                    }}
+                    value={clamped[k]}
                     onChange={(e) => set(k, parseInt(e.target.value) || 1)}
                   />
                 </div>
               ))}
             </div>
+            {hasOverlap && (
+              <p
+                style={{
+                  fontSize: "0.7rem",
+                  color: "#f74a4a",
+                  marginTop: "0.5rem",
+                  fontFamily: "var(--font-heading)",
+                }}
+              >
+                Position overlaps another project. Move it to a free slot.
+              </p>
+            )}
           </div>
 
           {/* Actions */}
@@ -561,17 +722,17 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
             </button>
             <button
               onClick={save}
-              disabled={saving || !form.title}
+              disabled={saving || !form.title || hasOverlap}
               style={{
                 flex: 2,
-                background: form.title ? "#c8f135" : "#1a1a1a",
-                color: form.title ? "#000" : "#444",
+                background: form.title && !hasOverlap ? "#c8f135" : "#1a1a1a",
+                color: form.title && !hasOverlap ? "#000" : "#444",
                 border: "none",
                 borderRadius: 8,
                 padding: "0.75rem",
                 fontFamily: "var(--font-heading)",
                 fontWeight: 700,
-                cursor: form.title ? "pointer" : "default",
+                cursor: form.title && !hasOverlap ? "pointer" : "default",
                 transition: "all 0.2s",
               }}
             >
@@ -603,7 +764,7 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
           >
             Live Preview
           </h3>
-          <ProjectCardPreview project={{ ...form, id: project?.id ?? "preview", order: 0 }} />
+          <ProjectCardPreview project={{ ...clamped, id: project?.id ?? "preview", order: 0 }} />
 
           <div
             style={{
@@ -619,9 +780,9 @@ export default function ProjectFormPanel({ project, onSave, onClose }: Props) {
           >
             <strong style={{ color: "#666" }}>Grid</strong>
             <br />
-            Col {form.col} – {form.col + form.colSpan - 1} &nbsp;·&nbsp; Span {form.colSpan}
+            Col {clamped.col} – {clamped.col + clamped.colSpan - 1} &nbsp;·&nbsp; Span {clamped.colSpan}
             <br />
-            Row {form.row} – {form.row + form.rowSpan - 1} &nbsp;·&nbsp; Span {form.rowSpan}
+            Row {clamped.row} – {clamped.row + clamped.rowSpan - 1} &nbsp;·&nbsp; Span {clamped.rowSpan}
           </div>
         </div>
       </div>
